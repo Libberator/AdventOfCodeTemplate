@@ -18,3 +18,7 @@
 	- Uses strings so no need to convert between `int`, `long`, or use `dynamic`
 	- Supports multi-line answers (\*only for Part 2). Tip: use StringBuilder
 - Benchmark project to compare your solution against your friends
+
+:writing_hand: Open to feedback. Feel free to send a PR or open a ticket! :computer: 
+
+:star: Leave a Star if you got any value from this :star:
