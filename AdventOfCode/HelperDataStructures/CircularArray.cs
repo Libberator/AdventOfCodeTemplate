@@ -10,7 +10,7 @@ public class CircularArray<T> : IEnumerable<T>
 {
     //The internal array used to store the elements.
     private readonly T[] _array;
-    
+
     //The index in the array of the currently selected element.
     private int _index = 0;
 

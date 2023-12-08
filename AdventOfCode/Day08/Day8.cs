@@ -1,9 +1,7 @@
 ﻿namespace AoC;
 
-public class Day8 : Puzzle
+public class Day8(ILogger logger, string path) : Puzzle(logger, path)
 {
-    public Day8(ILogger logger, string path) : base(logger, path) { }
-
     public override void Setup()
     {
         // Access file with ReadFromFile() for 1 line at a time or ReadAllLines() as a string dump

@@ -33,21 +33,13 @@ public interface INode
 }
 
 /// <summary>Generic class to represent a point on a grid, and store extra info in Value. Used for A* Pathfinding and Floodfill.</summary>
-public class Node<T> : INode<T>
+public class Node<T>(T value, Vector2Int pos, IGrid<T> grid, int cost = 10) : INode<T>
 {
-    protected readonly IGrid<T> _grid;
+    protected readonly IGrid<T> _grid = grid;
 
-    public Node(T value, Vector2Int pos, IGrid<T> grid, int cost = 10)
-    {
-        Value = value;
-        Pos = pos;
-        _grid = grid;
-        BaseCost = cost;
-    }
-
-    public T Value { get; set; }
-    public Vector2Int Pos { get; set; }
-    public int BaseCost { get; set; }
+    public T Value { get; set; } = value;
+    public Vector2Int Pos { get; set; } = pos;
+    public int BaseCost { get; set; } = cost;
     public int G { get; set; }
     public int H { get; set; }
     public INode? Connection { get; set; }

@@ -3,15 +3,10 @@
 namespace AoC;
 
 /// <summary>Base Class for every puzzle.</summary>
-public abstract class Puzzle
+public abstract class Puzzle(ILogger logger, string path)
 {
-    protected readonly ILogger _logger;
-    protected readonly string _path;
-    public Puzzle(ILogger logger, string path)
-    {
-        _logger = logger;
-        _path = path;
-    }
+    protected readonly ILogger _logger = logger;
+    protected readonly string _path = path;
 
     protected string[] ReadAllLines() => Utils.ReadAllLines(_path);
     protected IEnumerable<string> ReadFromFile(bool ignoreWhiteSpace = false) => Utils.ReadFrom(_path, ignoreWhiteSpace);

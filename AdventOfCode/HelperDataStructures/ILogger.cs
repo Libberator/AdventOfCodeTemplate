@@ -24,5 +24,3 @@ public class ConsoleLogger : ILogger
         Console.WriteLine(msg);
     }
 }
-
-// TODO: maybe add a Write to Local Disk Logger?

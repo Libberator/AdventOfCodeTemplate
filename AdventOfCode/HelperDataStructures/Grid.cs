@@ -16,22 +16,17 @@ public interface IGrid<T>
     public IEnumerable<INode<T>> GetNeighborsOf(INode<T> node);
 }
 
-public class Grid<T> : IGrid<T>
+public class Grid<T>(T[][] data) : IGrid<T>
 {
-    private readonly T[][] _data;
-    private readonly Dictionary<Vector2Int, INode<T>> _nodes = new();
-    private readonly Bounds _bounds;
+    private readonly T[][] _data = data;
+    private readonly Dictionary<Vector2Int, INode<T>> _nodes = [];
+    private readonly Bounds2D _bounds = new(0, data.Length - 1, 0, data[0].Length - 1);
 
     public virtual Func<INode<T>, INode<T>, bool> AreValidNeighbors { get; set; } = (node, neighbor) => true;
     public virtual Vector2Int[] NeighborDirections { get; set; } = Vector2Int.CardinalDirections;
 
     public Grid(T[][] data, Func<INode<T>, INode<T>, bool> validNeighborCheck) : this(data) => AreValidNeighbors = validNeighborCheck;
     public Grid(T[][] data, Vector2Int[] neighborDirections) : this(data) => NeighborDirections = neighborDirections;
-    public Grid(T[][] data) // assumes a rectangular grid, despite being a jagged array
-    {
-        _data = data;
-        _bounds = new(0, data.Length - 1, 0, data[0].Length - 1);
-    }
 
     public T this[int row, int col]
     {

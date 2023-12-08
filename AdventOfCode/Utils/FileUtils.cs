@@ -6,19 +6,17 @@ namespace AoC;
 
 public static partial class Utils
 {
-    public static bool FileExists(string path) => File.Exists(path);
-
     public static string FullPath(int number, string file = "input.txt")
     {
         var folder = $"Day{number:D2}";
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder, file);
     }
 
-    public static string[] ReadAllLines(string path) => FileExists(path) ? File.ReadAllLines(path) : Array.Empty<string>();
+    public static string[] ReadAllLines(string path) => File.Exists(path) ? File.ReadAllLines(path) : Array.Empty<string>();
 
     public static IEnumerable<string> ReadFrom(string path, bool ignoreWhiteSpace = false)
     {
-        if (!FileExists(path)) yield break;
+        if (!File.Exists(path)) yield break;
 
         string? line;
         using var reader = File.OpenText(path);

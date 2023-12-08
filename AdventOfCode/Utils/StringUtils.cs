@@ -37,4 +37,6 @@ public static partial class Utils
 
     /// <summary>Returns a concatenated string with the <paramref name="source"/> repeated <paramref name="n"/> times.</summary>
     public static string Repeat(this string source, int n) => new StringBuilder(n * source.Length).Insert(0, source, n).ToString();
+    /// <summary>Returns a concatenated string with the source <paramref name="c"/> repeated <paramref name="n"/> times.</summary>
+    public static string Repeat(this char c, int n) => new(c, n);
 }

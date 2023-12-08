@@ -15,7 +15,7 @@ public static class Pathfinding
     public static List<INode> FindPath_AStar(INode start, INode end)
     {
         SortedSet<INode> toSearch = new(new AStarHeuristic()) { start };
-        HashSet<INode> processed = new();
+        HashSet<INode> processed = [];
 
         while (toSearch.Count > 0)
         {
@@ -48,7 +48,7 @@ public static class Pathfinding
                 }
             }
         }
-        return new List<INode>();
+        return [];
     }
 
     private class AStarHeuristic : IComparer<INode>
@@ -70,7 +70,7 @@ public static class Pathfinding
     public static List<INode> FindPath_Dijkstra(INode start, Predicate<INode> endCondition)
     {
         SortedSet<INode> toSearch = new(new DijkstraHeuristic()) { start };
-        HashSet<INode> processed = new();
+        HashSet<INode> processed = [];
 
         while (toSearch.Count > 0)
         {
@@ -100,7 +100,7 @@ public static class Pathfinding
                 }
             }
         }
-        return new List<INode>();
+        return [];
     }
 
     private class DijkstraHeuristic : IComparer<INode>

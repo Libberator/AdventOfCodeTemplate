@@ -22,8 +22,31 @@ public static partial class Utils
     public static List<int> Factor(int n)
     {
         if (n < 1) throw new ArgumentOutOfRangeException($"Argument must be greater than 0. Value given: {n}");
-        List<int> factors = new() { 1 };
+        List<int> factors = [1];
         var upperLimit = (int)Math.Sqrt(n); // casting to int automatically floors
+        for (var i = upperLimit; i >= 2; i--)
+        {
+            if (n % i == 0)
+            {
+                factors.Insert(1, i);
+                var pair = n / i;
+                if (i != pair) factors.Add(pair);
+            }
+        }
+        if (n > 1) factors.Add(n);
+        return factors;
+    }
+
+    /// <summary>
+    /// Returns a sorted list of all the factors of <paramref name="n"/>. 
+    /// Throws exception if <paramref name="n"/> is negative or 0.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static List<long> Factor(this long n)
+    {
+        if (n < 1) throw new ArgumentOutOfRangeException($"Argument must be greater than 0. Value given: {n}");
+        List<long> factors = [1];
+        var upperLimit = (long)Math.Sqrt(n); // casting automatically floors
         for (var i = upperLimit; i >= 2; i--)
         {
             if (n % i == 0)
@@ -71,10 +94,10 @@ public static partial class Utils
     }
 
     /// <summary>Returns the greatest common divisor of the two arguments.</summary>
-    public static int GreatestCommonDivisor(int a, int b) => b > 0 ? GreatestCommonDivisor(b, a % b) : Math.Abs(a);
+    public static T GreatestCommonDivisor<T>(T a, T b) where T : INumber<T> => b > T.Zero ? GreatestCommonDivisor(b, a % b) : T.Abs(a);
 
     /// <summary>Returns the least common multiple of the two arguments.</summary>
-    public static int LeastCommonMultiple(int a, int b) => a * b / GreatestCommonDivisor(a, b);
+    public static T LeastCommonMultiple<T>(T a, T b) where T : INumber<T> => a * b / GreatestCommonDivisor(a, b);
 
     /// <summary>
     /// Computes `n mod m`. This is different than the `%` operator in the case of
@@ -86,37 +109,5 @@ public static partial class Utils
         return remainder + (remainder < 0 ? mod : 0);
     }
 
-    private static readonly Dictionary<int, int> _triangleLookup = new();
-    /// <summary>
-    /// Returns sum of 1 + 2 + ... + <paramref name="n"/>-1 + <paramref name="n"/>. Also known as Pascal's Triangle. 
-    /// Like Factorial but for addition instead. Same result as <paramref name="n"/>(<paramref name="n"/>+1)/2.
-    /// For sequences like 1, 3, 6, 10, 15, 21, 28, ...
-    /// </summary>
-    public static int GetTriangleNumber(int n)
-    {
-        if (n < 0) return 0; // unhandled cases
-        if (!_triangleLookup.TryGetValue(n, out int result))
-        {
-            result = (n * (n + 1)) >> 1;
-            _triangleLookup.Add(n, result);
-        }
-        return result;
-    }
-
-    private static readonly Dictionary<int, int> _fibonacciLookup = new() { { 0, 0 }, { 1, 1 } };
-    /// <summary>The famous Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, ... (<paramref name="n"/> starts at 0)</summary>
-    public static int GetFibonacci(int n)
-    {
-        if (n < 0) return 0; // avoids stackoverflow exception
-        if (!_fibonacciLookup.TryGetValue(n, out int result))
-        {
-            result = GetFibonacci(n - 2) + GetFibonacci(n - 1);
-            _fibonacciLookup.Add(n, result);
-        }
-        return result;
-    }
-
     // Note: To find mathematical formulas for specific sequences, go to https://oeis.org/
-
-    // TODO: Consider making a class for recursion, containing dictionary and methods that takes an index, Func and/or Predicate as args.
 }
