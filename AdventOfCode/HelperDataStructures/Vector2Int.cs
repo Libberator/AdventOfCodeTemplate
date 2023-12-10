@@ -227,10 +227,10 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static Vector2Int Max(Vector2Int a, Vector2Int b) => new(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
     /// <summary>Returns a vector whose elements are the minimum of each of the pairs of elements in two specified vectors.</summary>
     public static Vector2Int Min(Vector2Int a, Vector2Int b) => new(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
-    /// <summary>Returns a vector that is the rotated clockwise 90° verion of <paramref name="other"/>.</summary>
-    public static Vector2Int RotatedRight(Vector2Int other) => new(other.Y, -other.X);
-    /// <summary>Returns a vector that is the rotated counter-clockwise 90° verion of <paramref name="other"/>.</summary>
-    public static Vector2Int RotatedLeft(Vector2Int other) => new(-other.Y, other.X);
+    /// <summary>Returns a vector that is the rotated clockwise 90° version of <paramref name="value"/>.</summary>
+    public static Vector2Int RotateRight(Vector2Int value) => new(value.Y, -value.X);
+    /// <summary>Returns a vector that is the rotated counter-clockwise 90° version of <paramref name="value"/>.</summary>
+    public static Vector2Int RotateLeft(Vector2Int value) => new(-value.Y, value.X);
 
     #endregion
 
