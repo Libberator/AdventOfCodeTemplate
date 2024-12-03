@@ -1,22 +1,22 @@
 ﻿#define USE_STOPWATCH
-using AoC;
 using System;
 using System.Diagnostics;
+using AoC;
 
 const int START_DAY = 1;
 const int STOP_DAY = 25;
 
-ILogger logger = new ConsoleLogger();
+var logger = new ConsoleLogger();
 
-for (int i = START_DAY; i <= STOP_DAY; i++)
+for (var i = START_DAY; i <= STOP_DAY; i++)
 {
     Puzzle puzzle;
     try
     {
         puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", logger, Utils.FullPath(i));
-        logger.Log($"\x1b[32m-- Day {i} --\x1b[0m");
+        logger.Log($"\e[32m-- Day {i} --\e[0m");
     }
-    catch (Exception)// e)
+    catch (Exception) // e)
     {
         //logger.Log(e.Message);
         continue;

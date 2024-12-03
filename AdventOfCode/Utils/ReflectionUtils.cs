@@ -12,7 +12,8 @@ public static partial class Utils
             .FirstOrDefault(t => t.Name == className) ?? throw new Exception($"There is no class named {className}");
 
         if (Activator.CreateInstance(genericType, args) is not T instance)
-            throw new Exception($"Somehow the class {className} does not implement {nameof(T)}... which should be impossible");
+            throw new Exception(
+                $"Somehow the class {className} does not implement {nameof(T)}... which should be impossible");
 
         return instance;
     }

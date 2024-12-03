@@ -12,7 +12,10 @@ public static partial class Utils
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder, file);
     }
 
-    public static string[] ReadAllLines(string path) => File.Exists(path) ? File.ReadAllLines(path) : Array.Empty<string>();
+    public static string[] ReadAllLines(string path)
+    {
+        return File.Exists(path) ? File.ReadAllLines(path) : [];
+    }
 
     public static IEnumerable<string> ReadFrom(string path, bool ignoreWhiteSpace = false)
     {

@@ -1,6 +1,6 @@
 ## Advent Of Code Template
 
-*Written in C# 11 (preview), .NET 7.0*
+*Uses .NET 9.0 (w/ latest major C# release)*
 
 ### Template Features
 - Uses Reflection to easily discover classes
@@ -19,7 +19,7 @@
 	- Supports multi-line answers (\*only for Part 2). Tip: use StringBuilder
 - Benchmark project to compare your solution against your friends
 
-Note: For legal purposes, you should add the following line to your `.gitignore` because we don't own the rights to redistribute their data:
+Note: For legal purposes (because we don't own the rights to redistribute their data), the `.gitignore` includes the following line to ensure your input doesn't get pushed:
 > /AdventOfCode/*/input.txt
 
 For more info, see <a href="https://adventofcode.com/about">AdventOfCode's About Page</a>
@@ -29,7 +29,3 @@ For more info, see <a href="https://adventofcode.com/about">AdventOfCode's About
 
 :star: Leave a Star if you got any value from this :star:
 <br>
-
-Future TODO's:
-- Add a script to automate fetching input data
-- Expand the different types of pathfinding algorithms and make it more flexible

@@ -47,10 +47,10 @@ public class Tests
 
     private static IEnumerable<TestCaseData> TestCaseGenerator()
     {
-        Puzzle puzzle;
-        string[] expected;
-        for (int i = START_DAY; i <= STOP_DAY; i++)
+        for (var i = START_DAY; i <= STOP_DAY; i++)
         {
+            Puzzle puzzle;
+            string[] expected;
             try
             {
                 if (!TestUtils.TryGetTestPath(i, out var inputPath)) continue;
