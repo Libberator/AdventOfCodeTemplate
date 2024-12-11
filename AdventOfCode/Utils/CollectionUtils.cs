@@ -22,23 +22,15 @@ public static partial class Utils
     /// <summary>
     ///     Tries to grab a value from a dictionary if it exists, otherwise returns the provided default value.
     /// </summary>
-    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defVal)
-    {
-        return dict.TryGetValue(key, out var value) ? value : defVal;
-    }
+    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defVal) =>
+        dict.TryGetValue(key, out var value) ? value : defVal;
 
     // Note: If the collection is already sorted, then Middle is the same as Median
     /// <summary>Returns the middle-most value, favoring the end for collections of even quantities.</summary>
-    public static T Middle<T>(this IList<T> list)
-    {
-        return list.ElementAt(list.Count / 2);
-    }
+    public static T Middle<T>(this IList<T> list) => list.ElementAt(list.Count / 2);
 
     /// <summary>Returns the middle-most value, favoring the end for collections of even quantities.</summary>
-    public static T Middle<T>(this T[] array)
-    {
-        return array[array.Length / 2];
-    }
+    public static T Middle<T>(this T[] array) => array[array.Length / 2];
 
     /// <summary>Swaps two elements in a collection.</summary>
     public static void Swap<T>(this IList<T> list, int index1, int index2)
@@ -63,15 +55,11 @@ public static partial class Utils
         list.Insert(to, temp);
     }
 
-    public static T MaxBy<T>(this IEnumerable<T> source, Func<T, IComparable> score)
-    {
-        return source.Aggregate((x, y) => score(x).CompareTo(score(y)) > 0 ? x : y);
-    }
+    public static T MaxBy<T>(this IEnumerable<T> source, Func<T, IComparable> score) =>
+        source.Aggregate((x, y) => score(x).CompareTo(score(y)) > 0 ? x : y);
 
-    public static T MinBy<T>(this IEnumerable<T> source, Func<T, IComparable> score)
-    {
-        return source.Aggregate((x, y) => score(x).CompareTo(score(y)) < 0 ? x : y);
-    }
+    public static T MinBy<T>(this IEnumerable<T> source, Func<T, IComparable> score) =>
+        source.Aggregate((x, y) => score(x).CompareTo(score(y)) < 0 ? x : y);
 
     /// <summary>
     ///     For getting vertical data in 2D arrays. This will throw an exception if you don't have the right amount in the
@@ -86,13 +74,9 @@ public static partial class Utils
     }
 
     /// <summary>This will return 1 column of data from a 2D jagged array into a single array.</summary>
-    public static T[] GetColumnData<T>(this T[][] values, int column)
-    {
-        return values.Select(x => x[column]).ToArray();
-    }
+    public static T[] GetColumnData<T>(this T[][] values, int column) =>
+        values.Select(x => x[column]).ToArray();
 
-    public static string JoinAsString<T>(this IEnumerable<T> source, string delimiter = ", ")
-    {
-        return string.Join(delimiter, source);
-    }
+    public static string JoinAsString<T>(this IEnumerable<T> source, string delimiter = ", ") =>
+        string.Join(delimiter, source);
 }

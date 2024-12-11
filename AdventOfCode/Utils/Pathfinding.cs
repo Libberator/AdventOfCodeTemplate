@@ -141,11 +141,10 @@ public static class Pathfinding
 
     #endregion Dijkstra / FloodFill/BFS
 
-    // TODO: Consider adding the following...
+    // TODO: Consider adding the following pathfinding algorithms...
     // Depth First Search (DFS)
     // Best-First
     // Bi-directional A*
     // Iterative Deeping A* (IDA*)
     // Minimum Spanning Tree (MSP)
-    // For reference: https://github.com/brean/python-pathfinding 
 }

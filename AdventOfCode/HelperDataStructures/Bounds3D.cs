@@ -73,14 +73,11 @@ public struct Bounds3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMa
     /// </summary>
     public readonly int Depth => ZMax - ZMin;
 
-    /// <summary>Returns a point on the border of this Bounds that is closest to <paramref name="pos" />.</summary>
-    public readonly Vector3Int ClosestPointOnBorder(Vector3Int pos)
-    {
-        return ClosestPointOnBorder(pos.X, pos.Y, pos.Z);
-    }
+    /// <summary>Returns a point on the border of Bounds that is closest to <paramref name="pos" />.</summary>
+    public readonly Vector3Int ClosestPointOnBorder(Vector3Int pos) => ClosestPointOnBorder(pos.X, pos.Y, pos.Z);
 
     /// <summary>
-    ///     Returns a point on the border of this Bounds that is closest to (<paramref name="x" />, <paramref name="y" />).
+    ///     Returns a point on the border of Bounds that is closest to (<paramref name="x" />, <paramref name="y" />).
     ///     Ties go in favor of Z-face, then Y-face, then X-face.
     /// </summary>
     public readonly Vector3Int ClosestPointOnBorder(int x, int y, int z)
@@ -107,40 +104,23 @@ public struct Bounds3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMa
     }
 
     /// <summary>Returns a value to indicate if another Bounds is fully within the bounding box, including sharing an edge.</summary>
-    public readonly bool Contains(Bounds3D other)
-    {
-        return Contains(other.Min) && Contains(other.Max);
-    }
+    public readonly bool Contains(Bounds3D other) => Contains(other.Min) && Contains(other.Max);
 
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
-    public readonly bool Contains(Vector3Int pos)
-    {
-        return Contains(pos.X, pos.Y, pos.Z);
-    }
+    public readonly bool Contains(Vector3Int pos) => Contains(pos.X, pos.Y, pos.Z);
 
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
-    public readonly bool Contains(int x, int y, int z)
-    {
-        return IsInXBounds(x) && IsInYBounds(y) && IsInZBounds(z);
-    }
+    public readonly bool Contains(int x, int y, int z) => IsInXBounds(x) && IsInYBounds(y) && IsInZBounds(z);
 
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
-    public readonly int DistanceFromBorder(Vector3Int pos)
-    {
-        return pos.DistanceManhattanTo(ClosestPointOnBorder(pos));
-    }
+    public readonly int DistanceFromBorder(Vector3Int pos) => pos.DistanceManhattanTo(ClosestPointOnBorder(pos));
 
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
-    public readonly int DistanceFromBorder(int x, int y, int z)
-    {
-        return new Vector3Int(x, y, z).DistanceManhattanTo(ClosestPointOnBorder(x, y, z));
-    }
+    public readonly int DistanceFromBorder(int x, int y, int z) =>
+        new Vector3Int(x, y, z).DistanceManhattanTo(ClosestPointOnBorder(x, y, z));
 
     /// <summary>Grows the Bounds to include the point.</summary>
-    public void Encapsulate(Vector3Int point)
-    {
-        Encapsulate(point.X, point.Y, point.Z);
-    }
+    public void Encapsulate(Vector3Int point) => Encapsulate(point.X, point.Y, point.Z);
 
     /// <summary>Grows the Bounds to include the point.</summary>
     public void Encapsulate(int x, int y, int z)
@@ -154,10 +134,7 @@ public struct Bounds3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMa
     }
 
     /// <summary>Expand the bounds by increasing its size by amount along each side.</summary>
-    public void Expand(int amount)
-    {
-        Expand(amount, amount, amount);
-    }
+    public void Expand(int amount) => Expand(amount, amount, amount);
 
     /// <summary>Expand the bounds by increasing its size by each amount along their respective side.</summary>
     public void Expand(int xAmount, int yAmount, int zAmount)
@@ -183,41 +160,26 @@ public struct Bounds3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMa
     }
 
     /// <summary>Returns true if <paramref name="x" /> is on or inside the Bounds.</summary>
-    public readonly bool IsInXBounds(int x)
-    {
-        return XMin <= x && x <= XMax;
-    }
+    public readonly bool IsInXBounds(int x) => XMin <= x && x <= XMax;
 
     /// <summary>Returns true if <paramref name="y" /> is on or inside the Bounds.</summary>
-    public readonly bool IsInYBounds(int y)
-    {
-        return YMin <= y && y <= YMax;
-    }
+    public readonly bool IsInYBounds(int y) => YMin <= y && y <= YMax;
 
     /// <summary>Returns true if <paramref name="z" /> is on or inside the Bounds.</summary>
-    public readonly bool IsInZBounds(int z)
-    {
-        return ZMin <= z && z <= ZMax;
-    }
+    public readonly bool IsInZBounds(int z) => ZMin <= z && z <= ZMax;
 
     /// <summary>Returns a value to indicate the position is directly on the edge of the Bounds.</summary>
-    public readonly bool IsOnEdge(Vector3Int pos)
-    {
-        return IsOnEdge(pos.X, pos.Y, pos.Z);
-    }
+    public readonly bool IsOnEdge(Vector3Int pos) => IsOnEdge(pos.X, pos.Y, pos.Z);
 
     /// <summary>Returns a value to indicate the position is directly on the edge of the Bounds.</summary>
-    public readonly bool IsOnEdge(int x, int y, int z)
-    {
-        return Contains(x, y, z) && (x == XMin || x == XMax || y == XMin || y == YMax || z == ZMin || z == ZMax);
-    }
+    public readonly bool IsOnEdge(int x, int y, int z) => Contains(x, y, z) &&
+                                                          (x == XMin || x == XMax || y == XMin || y == YMax ||
+                                                           z == ZMin || z == ZMax);
 
     /// <summary>Returns a value to indicate if another bounding box intersects or shares an edge with this bounding box.</summary>
-    public readonly bool Overlaps(Bounds3D other)
-    {
-        return XMin <= other.XMax && other.XMin <= XMax && YMin <= other.YMax && other.YMin <= YMax &&
-               ZMin <= other.ZMax && other.ZMin <= ZMax;
-    }
+    public readonly bool Overlaps(Bounds3D other) =>
+        XMin <= other.XMax && other.XMin <= XMax && YMin <= other.YMax && other.YMin <= YMax &&
+        ZMin <= other.ZMax && other.ZMin <= ZMax;
 
     /// <summary>Sets the bounds to the min and max value of the box.</summary>
     public void SetMinMax(Vector3Int min, Vector3Int max)

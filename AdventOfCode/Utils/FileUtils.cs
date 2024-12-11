@@ -12,18 +12,14 @@ public static partial class Utils
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder, file);
     }
 
-    public static string[] ReadAllLines(string path)
-    {
-        return File.Exists(path) ? File.ReadAllLines(path) : [];
-    }
+    public static string[] ReadAllLines(string path) => File.Exists(path) ? File.ReadAllLines(path) : [];
 
     public static IEnumerable<string> ReadFrom(string path, bool ignoreWhiteSpace = false)
     {
         if (!File.Exists(path)) yield break;
 
-        string? line;
         using var reader = File.OpenText(path);
-        while ((line = reader.ReadLine()) != null)
+        while (reader.ReadLine() is { } line)
         {
             if (ignoreWhiteSpace && string.IsNullOrWhiteSpace(line)) continue;
             yield return line;

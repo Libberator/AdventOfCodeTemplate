@@ -51,22 +51,13 @@ public struct Bounds(int min, int max)
     }
 
     /// <summary>Returns a value to indicate if another Bounds is fully within the bounding box, including sharing an edge.</summary>
-    public readonly bool Contains(Bounds other)
-    {
-        return Contains(other.Min) && Contains(other.Max);
-    }
+    public readonly bool Contains(Bounds other) => Contains(other.Min) && Contains(other.Max);
 
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
-    public readonly bool Contains(int x)
-    {
-        return x >= XMin && x <= XMax;
-    }
+    public readonly bool Contains(int x) => x >= XMin && x <= XMax;
 
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
-    public readonly int DistanceFromBorder(int pos)
-    {
-        return Math.Min(Math.Abs(XMax - pos), Math.Abs(pos - XMin));
-    }
+    public readonly int DistanceFromBorder(int pos) => Math.Min(Math.Abs(XMax - pos), Math.Abs(pos - XMin));
 
     /// <summary>Grows the Bounds to include the point.</summary>
     public void Encapsulate(int x)
@@ -90,16 +81,10 @@ public struct Bounds(int min, int max)
     }
 
     /// <summary>Returns a value to indicate the position is directly on the edge of the Bounds.</summary>
-    public readonly bool IsOnEdge(int x)
-    {
-        return x == XMin || x == XMax;
-    }
+    public readonly bool IsOnEdge(int x) => x == XMin || x == XMax;
 
     /// <summary>Returns a value to indicate if another bounding box intersects or shares an edge with this bounding box.</summary>
-    public readonly bool Overlaps(Bounds other)
-    {
-        return other.XMax >= XMin && other.XMin <= XMax;
-    }
+    public readonly bool Overlaps(Bounds other) => other.XMax >= XMin && other.XMin <= XMax;
 
     /// <summary>Sets the bounds to the min and max value of the box.</summary>
     public void SetMinMax(int min, int max)

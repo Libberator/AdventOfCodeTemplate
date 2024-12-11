@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AoC;
 
-/// <summary>A standard array except elements are accesed in a circular fashion.</summary>
+/// <summary>A standard array except elements are accessed in a circular fashion.</summary>
 public class CircularArray<T> : IEnumerable<T>
 {
     //The internal array used to store the elements.
@@ -82,21 +82,12 @@ public class CircularArray<T> : IEnumerable<T>
         set => _array[index.Mod(Capacity)] = value;
     }
 
-    public IEnumerator<T> GetEnumerator()
-    {
-        return Forward(false).GetEnumerator();
-    }
+    public IEnumerator<T> GetEnumerator() => Forward(false).GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>Resets the index to the first element.</summary>
-    public void Reset()
-    {
-        Index = 0;
-    }
+    public void Reset() => Index = 0;
 
     /// <summary>
     ///     Move the current index by the given offset (default 1).
@@ -138,10 +129,7 @@ public class CircularArray<T> : IEnumerable<T>
     ///     Peeks at an element with the given offset (default 1).
     ///     Negative offsets are allowed, and will simply offset in the opposite direction as a positive offset.
     /// </summary>
-    public T Peek(int offset = 1)
-    {
-        return _array[(_index + offset).Mod(Capacity)];
-    }
+    public T Peek(int offset = 1) => _array[(_index + offset).Mod(Capacity)];
 
     /// <summary>
     ///     Returns elements of the array moving in the positive direction.

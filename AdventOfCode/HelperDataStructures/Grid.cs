@@ -24,15 +24,10 @@ public class Grid<T>(T[][] data) : IGrid<T>
     private readonly T[][] _data = data;
     private readonly Dictionary<Vector2Int, INode<T>> _nodes = [];
 
-    public Grid(T[][] data, Func<INode<T>, INode<T>, bool> validNeighborCheck) : this(data)
-    {
+    public Grid(T[][] data, Func<INode<T>, INode<T>, bool> validNeighborCheck) : this(data) =>
         AreValidNeighbors = validNeighborCheck;
-    }
 
-    public Grid(T[][] data, Vector2Int[] neighborDirections) : this(data)
-    {
-        NeighborDirections = neighborDirections;
-    }
+    public Grid(T[][] data, Vector2Int[] neighborDirections) : this(data) => NeighborDirections = neighborDirections;
 
     public T this[int row, int col]
     {
@@ -64,8 +59,5 @@ public class Grid<T>(T[][] data) : IGrid<T>
         return true;
     }
 
-    public bool AddNode(INode<T> node)
-    {
-        return _nodes.TryAdd(node.Pos, node);
-    }
+    public bool AddNode(INode<T> node) => _nodes.TryAdd(node.Pos, node);
 }

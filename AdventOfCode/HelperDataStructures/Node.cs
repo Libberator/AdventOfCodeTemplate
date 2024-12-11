@@ -59,14 +59,8 @@ public class Node<T>(T value, Vector2Int pos, IGrid<T> grid, int cost = 10) : IN
     public INode? Connection { get; set; }
     public virtual IEnumerable<INode> Neighbors => _grid.GetNeighborsOf(this);
 
-    public virtual int GetHCostTo(INode target)
-    {
-        return (int)Math.Round(10 * Pos.DistanceEuclidianTo(target.Pos));
-        // Pos.DistanceChebyshevTo(target.Pos); // Pos.DistanceManhattanTo(target.Pos);
-    }
+    public virtual int GetHCostTo(INode target) => (int)Math.Round(10 * Pos.DistanceEuclideanTo(target.Pos));
 
-    public override int GetHashCode()
-    {
-        return Pos.GetHashCode();
-    }
+    // Pos.DistanceChebyshevTo(target.Pos); // Pos.DistanceManhattanTo(target.Pos);
+    public override int GetHashCode() => Pos.GetHashCode();
 }

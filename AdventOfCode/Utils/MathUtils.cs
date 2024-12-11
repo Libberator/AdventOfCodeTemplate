@@ -8,10 +8,8 @@ namespace AoC;
 public static partial class Utils
 {
     /// <summary>Similar to Sum(), except each element in the <paramref name="source" /> is multiplied by each other.</summary>
-    public static T Product<T>(this IEnumerable<T> source) where T : INumber<T>
-    {
-        return source.Aggregate(T.MultiplicativeIdentity, (current, value) => current * value);
-    }
+    public static T Product<T>(this IEnumerable<T> source) where T : INumber<T> =>
+        source.Aggregate(T.MultiplicativeIdentity, (current, value) => current * value);
 
     /// <summary>
     ///     Returns a sorted list of all the factors of <paramref name="n" />.
@@ -60,27 +58,17 @@ public static partial class Utils
     // Note: This "IsPrime" method is a "naive" implementation.
     // For values greater than 2^14, see Miller-Rabin for a quicker approach: https://cade.site/diy-fast-isprime
     /// <summary>Checks if <paramref name="n" /> is prime: greater than 1 with no positive divisors other than 1 and itself.</summary>
-    public static bool IsPrime(this int n)
-    {
-        return IsPrime((long)n);
-    }
+    public static bool IsPrime(this int n) => IsPrime((long)n);
 
     /// <summary>Checks if <paramref name="n" /> is prime: greater than 1 with no positive divisors other than 1 and itself.</summary>
-    public static bool IsPrime(this long n)
-    {
-        if (n <= 1) return false;
-        return n.FirstPrimeFactor() == n;
-    }
+    public static bool IsPrime(this long n) => n > 1 && n.FirstPrimeFactor() == n;
 
     /// <summary>
     ///     This will return the first prime number that <paramref name="n" /> is divisible by.
     ///     If <paramref name="n" /> is 1 or prime, it will return itself. Negative values throw exception.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException" />
-    public static int FirstPrimeFactor(this int n)
-    {
-        return (int)FirstPrimeFactor((long)n);
-    }
+    public static int FirstPrimeFactor(this int n) => (int)FirstPrimeFactor((long)n);
 
     /// <summary>
     ///     This will return the first prime number that <paramref name="n" /> is divisible by.
@@ -112,10 +100,7 @@ public static partial class Utils
     }
 
     /// <summary>Returns the least common multiple of the two arguments.</summary>
-    public static T LeastCommonMultiple<T>(T a, T b) where T : INumber<T>
-    {
-        return a * b / GreatestCommonDivisor(a, b);
-    }
+    public static T LeastCommonMultiple<T>(T a, T b) where T : INumber<T> => a * b / GreatestCommonDivisor(a, b);
 
     /// <summary>
     ///     Computes `n mod m`. This is different from the `%` operator in the case of

@@ -61,10 +61,7 @@ public struct Bounds2D(int xMin, int xMax, int yMin, int yMax)
     public readonly int Height => YMax - YMin;
 
     /// <summary>Returns a point on the border of this Bounds that is closest to <paramref name="pos" />.</summary>
-    public readonly Vector2Int ClosestPointOnBorder(Vector2Int pos)
-    {
-        return ClosestPointOnBorder(pos.X, pos.Y);
-    }
+    public readonly Vector2Int ClosestPointOnBorder(Vector2Int pos) => ClosestPointOnBorder(pos.X, pos.Y);
 
     /// <summary>
     ///     Returns a point on the border of this Bounds that is closest to (<paramref name="x" />, <paramref name="y" />).
@@ -86,40 +83,23 @@ public struct Bounds2D(int xMin, int xMax, int yMin, int yMax)
     }
 
     /// <summary>Returns a value to indicate if another Bounds is fully within the bounding box, including sharing an edge.</summary>
-    public readonly bool Contains(Bounds2D other)
-    {
-        return Contains(other.Min) && Contains(other.Max);
-    }
+    public readonly bool Contains(Bounds2D other) => Contains(other.Min) && Contains(other.Max);
 
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
-    public readonly bool Contains(Vector2Int pos)
-    {
-        return Contains(pos.X, pos.Y);
-    }
+    public readonly bool Contains(Vector2Int pos) => Contains(pos.X, pos.Y);
 
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
-    public readonly bool Contains(int x, int y)
-    {
-        return IsInHorizontalBounds(x) && IsInVerticalBounds(y);
-    }
+    public readonly bool Contains(int x, int y) => IsInHorizontalBounds(x) && IsInVerticalBounds(y);
 
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
-    public readonly int DistanceFromBorder(Vector2Int pos)
-    {
-        return pos.DistanceManhattanTo(ClosestPointOnBorder(pos));
-    }
+    public readonly int DistanceFromBorder(Vector2Int pos) => pos.DistanceManhattanTo(ClosestPointOnBorder(pos));
 
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
-    public readonly int DistanceFromBorder(int x, int y)
-    {
-        return new Vector2Int(x, y).DistanceManhattanTo(ClosestPointOnBorder(x, y));
-    }
+    public readonly int DistanceFromBorder(int x, int y) =>
+        new Vector2Int(x, y).DistanceManhattanTo(ClosestPointOnBorder(x, y));
 
     /// <summary>Grows the Bounds to include the point.</summary>
-    public void Encapsulate(Vector2Int point)
-    {
-        Encapsulate(point.X, point.Y);
-    }
+    public void Encapsulate(Vector2Int point) => Encapsulate(point.X, point.Y);
 
     /// <summary>Grows the Bounds to include the point.</summary>
     public void Encapsulate(int x, int y)
@@ -131,10 +111,7 @@ public struct Bounds2D(int xMin, int xMax, int yMin, int yMax)
     }
 
     /// <summary>Expand the bounds by increasing its size by amount along each side.</summary>
-    public void Expand(int amount)
-    {
-        Expand(amount, amount);
-    }
+    public void Expand(int amount) => Expand(amount, amount);
 
     /// <summary>Expand the bounds by increasing its size by each amount along their respective side.</summary>
     public void Expand(int xAmount, int yAmount)
@@ -157,34 +134,20 @@ public struct Bounds2D(int xMin, int xMax, int yMin, int yMax)
     }
 
     /// <summary>Returns true if <paramref name="x" /> is on or inside the Bounds.</summary>
-    public readonly bool IsInHorizontalBounds(int x)
-    {
-        return XMin <= x && x <= XMax;
-    }
+    public readonly bool IsInHorizontalBounds(int x) => XMin <= x && x <= XMax;
 
     /// <summary>Returns true if <paramref name="y" /> is on or inside the Bounds.</summary>
-    public readonly bool IsInVerticalBounds(int y)
-    {
-        return YMin <= y && y <= YMax;
-    }
+    public readonly bool IsInVerticalBounds(int y) => YMin <= y && y <= YMax;
 
     /// <summary>Returns a value to indicate the position is directly on the edge of the Bounds.</summary>
-    public readonly bool IsOnEdge(Vector2Int pos)
-    {
-        return IsOnEdge(pos.X, pos.Y);
-    }
+    public readonly bool IsOnEdge(Vector2Int pos) => IsOnEdge(pos.X, pos.Y);
 
     /// <summary>Returns a value to indicate the position is directly on the edge of the Bounds.</summary>
-    public readonly bool IsOnEdge(int x, int y)
-    {
-        return Contains(x, y) && (x == XMin || x == XMax || y == XMin || y == YMax);
-    }
+    public readonly bool IsOnEdge(int x, int y) => Contains(x, y) && (x == XMin || x == XMax || y == XMin || y == YMax);
 
     /// <summary>Returns a value to indicate if another bounding box intersects or shares an edge with this bounding box.</summary>
-    public readonly bool Overlaps(Bounds2D other)
-    {
-        return XMin <= other.XMax && other.XMin <= XMax && YMin <= other.YMax && other.YMin <= YMax;
-    }
+    public readonly bool Overlaps(Bounds2D other) =>
+        XMin <= other.XMax && other.XMin <= XMax && YMin <= other.YMax && other.YMin <= YMax;
 
     /// <summary>Sets the bounds to the min and max value of the box.</summary>
     public void SetMinMax(Vector2Int min, Vector2Int max)
