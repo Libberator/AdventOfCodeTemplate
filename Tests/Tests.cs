@@ -6,14 +6,14 @@ namespace AoC.Tests;
 
 public class Tests
 {
-    const int START_DAY = 1;
-    const int STOP_DAY = 25;
+    private const int StartDay = 1;
+    private const int StopDay = 25;
 
-    private static readonly ILogger _logger = new TestLogger();
+    private static readonly TestLogger Logger = new();
 
     [Test]
     [TestCaseSource(nameof(TestCaseGenerator))]
-    public void TestPuzzle(Puzzle puzzle, string[] expected)
+    public void TestPuzzle(Solver solver, string[] expected)
     {
         // Arrange
         var expectedResult1 = expected.Length switch
@@ -31,11 +31,11 @@ public class Tests
         };
 
         // Act
-        puzzle.Setup();
-        puzzle.SolvePart1();
-        var part1Result = _logger.LastMessage;
-        puzzle.SolvePart2();
-        var part2Result = _logger.LastMessage?.Trim();
+        solver.Setup();
+        solver.SolvePart1();
+        var part1Result = Logger.LastMessage;
+        solver.SolvePart2();
+        var part2Result = Logger.LastMessage?.Trim();
 
         // Assert
         Assert.Multiple(() =>
@@ -47,23 +47,23 @@ public class Tests
 
     private static IEnumerable<TestCaseData> TestCaseGenerator()
     {
-        for (var i = START_DAY; i <= STOP_DAY; i++)
+        for (var i = StartDay; i <= StopDay; i++)
         {
-            Puzzle puzzle;
+            Solver solver;
             string[] expected;
             try
             {
                 if (!TestUtils.TryGetTestPath(i, out var inputPath)) continue;
                 if (!TestUtils.TryGetTestPath(i, out var expectedPath, "results.txt")) continue;
 
-                puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", _logger, inputPath);
+                solver = Utils.GetClassOfType<Solver>($"Day{i}", Logger, inputPath);
                 expected = Utils.ReadAllLines(expectedPath);
             }
             catch (Exception)
             {
                 continue;
             }
-            yield return new TestCaseData(puzzle, expected).SetName($"Day {i:D2}");
+            yield return new TestCaseData(solver, expected).SetName($"Day {i:D2}");
         }
     }
 }

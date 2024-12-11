@@ -1,24 +1,24 @@
-﻿#define USE_STOPWATCH
+﻿#define USE_STOPWATCH // Comment out if you don't want times displayed
 using System;
 using System.Diagnostics;
 using AoC;
 
-const int START_DAY = 1;
-const int STOP_DAY = 25;
+const int startDay = 1;
+const int stopDay = 25;
 
 var logger = new ConsoleLogger();
 
-for (var i = START_DAY; i <= STOP_DAY; i++)
+for (var i = startDay; i <= stopDay; i++)
 {
-    Puzzle puzzle;
+    Solver solver;
     try
     {
-        puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", logger, Utils.FullPath(i));
+        solver = Utils.GetClassOfType<Solver>($"Day{i}", logger, Utils.FullPath(i));
         logger.Log($"\e[32m-- Day {i} --\e[0m");
     }
-    catch (Exception) // e)
+    catch (Exception e)
     {
-        //logger.Log(e.Message);
+        Console.WriteLine(e.Message);
         continue;
     }
 
@@ -26,15 +26,15 @@ for (var i = START_DAY; i <= STOP_DAY; i++)
     var timer = new Stopwatch();
 
     timer.Start();
-    puzzle.Setup();
+    solver.Setup();
     var setup = timer.ElapsedMilliseconds;
 
     timer.Restart();
-    puzzle.SolvePart1();
+    solver.SolvePart1();
     var part1 = timer.ElapsedMilliseconds;
 
     timer.Restart();
-    puzzle.SolvePart2();
+    solver.SolvePart2();
     var part2 = timer.ElapsedMilliseconds;
 
     logger.Log($"Setup: {setup}ms. Part1: {part1}ms. Part2: {part2}ms. Total: {setup + part1 + part2}ms");

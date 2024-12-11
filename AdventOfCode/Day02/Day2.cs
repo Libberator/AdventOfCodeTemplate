@@ -1,10 +1,15 @@
 ﻿namespace AoC;
 
-public class Day2(ILogger logger, string path) : Puzzle(logger, path)
+public class Day2(ILogger logger, string path) : Solver(logger, path)
 {
     public override void Setup()
     {
-        // Access file with ReadFromFile() for 1 line at a time or ReadAllLines() as a string dump
+        //var data = ReadAllLines();
+        
+        //foreach (var line in ReadFromFile())
+        //{
+        //    // parse the input.txt here line-by-line
+        //}
     }
 
     public override void SolvePart1()

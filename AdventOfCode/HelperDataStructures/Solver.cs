@@ -3,7 +3,7 @@
 namespace AoC;
 
 /// <summary>Base Class for every puzzle.</summary>
-public abstract class Puzzle(ILogger logger, string path)
+public abstract class Solver(ILogger logger, string path)
 {
     public abstract void Setup();
     public abstract void SolvePart1();
