@@ -398,5 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 .idea
 
-AdventOfCode/*/input.txt
-AdventOfCode/.idea/.idea.AdventOfCode/.idea/projectSettingsUpdater.xml
+# Ignore AoC user-generated input
+Solutions/*/*/input.txt
