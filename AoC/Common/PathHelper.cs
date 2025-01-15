@@ -24,8 +24,13 @@ internal static class PathHelper
         if (string.IsNullOrEmpty(filePath)) return GetFullFilePath(year, day, "input.txt");
 
         if (File.Exists(filePath)) return Path.GetFullPath(filePath);
-        if (Directory.Exists(filePath)) return Path.GetFullPath(Path.Combine(filePath, "input.txt"));
 
-        throw new ArgumentException($"Could not validate path '{filePath}'. Ensure the directory or file exists.");
+        var directory = Path.GetDirectoryName(filePath);
+        if (!Directory.Exists(directory))
+            throw new ArgumentException($"Could not validate path '{filePath}'. Ensure the directory or file exists.");
+
+        var fileName = Path.GetFileName(filePath);
+        if (string.IsNullOrEmpty(fileName)) fileName = "input.txt";
+        return Path.GetFullPath(Path.Combine(directory, fileName));
     }
 }

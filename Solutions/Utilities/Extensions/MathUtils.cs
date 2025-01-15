@@ -129,15 +129,108 @@ public static partial class Utils
         return currentCoefficient;
     }
 
+    /// <summary>
+    ///     Get the next (higher) power of 10. Similar to `10 * Math.Pow(10, Math.Floor(Math.Log10(number))` but more
+    ///     efficient.
+    /// </summary>
+    /// <example>
+    ///     Useful for number concatenation. Instead of using strings to do "123" + "45", it would be
+    ///     <code>123 * 45.NextPowerOfTen() + 45  // 12,345</code>
+    /// </example>
+    /// <returns>[1-9] -> 10. [10-99] -> 100. [100-999] -> 1000. etc.</returns>
+    public static T NextPowerOf10<T>(this T value) where T : INumber<T>
+    {
+        if (T.IsNegative(value))
+            throw new ArgumentException($"Argument must be a positive integer. Value given: {value}", nameof(value));
+        var ten = (T.One + T.One + T.One) * (T.One + T.One + T.One) + T.One;
+        var power = ten;
+        while (value >= ten)
+        {
+            value /= ten;
+            power *= ten;
+        }
+
+        return power;
+    }
+
     /// <summary>Similar to Sum(), except each element in the <paramref name="source" /> is multiplied by each other.</summary>
     public static T Product<T>(this IEnumerable<T> source) where T : INumber<T> =>
         source.Aggregate(T.MultiplicativeIdentity, (current, value) => current * value);
 
-    /// <summary>Rounds to nearest integer value, and returns as integer. Uses Banker's Rounding (to nearest even)</summary>
-    public static int RoundToInt(this double value) => (int)Math.Round(value);
+    /// <summary>
+    ///     Generic solver for a set of linear equations. Expects an NxN matrix of coefficient and N-length array of
+    ///     constants where N is the number of unknown variables that it will solve for. 
+    /// </summary>
+    /// <param name="coefficients">Multidimensional array of coefficients; the multipliers of the unknown variables</param>
+    /// <param name="constants">The known values unassociated with any variable on the right-hand side of the equation</param>
+    /// <returns>The values for the unknown variables which satisfies all the equations. Handle floating point precision</returns>
+    /// <example>
+    ///     Assume you have the set of equations in the following form:<br />
+    ///     [2x + 3y = 8] and [3x + y = 5]<br />
+    ///     Here's what solving that would look like:
+    ///     <code>
+    /// var coefficients = new int[,] { { 2, 3 }, { 3, 1 } };
+    /// var constants = new int[] { 8, 5 };
+    /// var result = Utils.SolveLinearEquations(coefficients, constants); // [ 1, 2 ]
+    /// </code>
+    /// </example>
+    public static T[] SolveLinearEquations<T>(T[,] coefficients, T[] constants) where T : INumber<T>
+    {
+        var n = constants.Length;
 
-    /// <summary>Rounds to nearest integer value, and returns as integer. Uses Banker's Rounding (to nearest even)</summary>
-    public static int RoundToInt(this float value) => (int)Math.Round(value);
+        if (coefficients.GetLength(0) != n || coefficients.GetLength(1) != n)
+            throw new ArgumentException("Matrix dimensions must match the number of constants.");
+
+        // Augmented matrix
+        var augmented = new T[n, n + 1];
+        for (var i = 0; i < n; i++)
+        {
+            for (var j = 0; j < n; j++)
+                augmented[i, j] = coefficients[i, j];
+            augmented[i, n] = constants[i];
+        }
+
+        // Gaussian elimination
+        for (var i = 0; i < n; i++)
+        {
+            // Pivot selection (partial pivoting)
+            var maxRow = i;
+            for (var k = i + 1; k < n; k++)
+                if (T.Abs(augmented[k, i]) > T.Abs(augmented[maxRow, i]))
+                    maxRow = k;
+
+            // Swap rows
+            for (var k = i; k < n + 1; k++)
+                (augmented[i, k], augmented[maxRow, k]) = (augmented[maxRow, k], augmented[i, k]);
+
+            // Make the pivot element 1
+            var pivot = augmented[i, i];
+            if (pivot == T.Zero)
+                throw new InvalidOperationException("Matrix is singular or system has no unique solution.");
+
+            for (var k = i; k < n + 1; k++)
+                augmented[i, k] /= pivot;
+
+            // Eliminate column below pivot
+            for (var k = i + 1; k < n; k++)
+            {
+                var factor = augmented[k, i];
+                for (var j = i; j < n + 1; j++)
+                    augmented[k, j] -= factor * augmented[i, j];
+            }
+        }
+
+        // Back substitution
+        var result = new T[n];
+        for (var i = n - 1; i >= 0; i--)
+        {
+            result[i] = augmented[i, n];
+            for (var j = i + 1; j < n; j++)
+                result[i] -= augmented[i, j] * result[j];
+        }
+
+        return result;
+    }
 
     /// <summary>Given n, returns the sum of 1 + 2 + ... + n -1 + n. Same as (n+1).BinomialChoose(2).</summary>
     public static T TriangleSum<T>(T n) where T : INumber<T> => n * (n + T.One) / (T.One + T.One);

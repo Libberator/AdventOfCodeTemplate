@@ -100,7 +100,7 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
     ///     Returns all points in a rectangle, or line, between this vector (inclusive) and <paramref name="max" />
     ///     (exclusive).
     /// </summary>
-    public IEnumerable<Vec2D> GeneratePoints(Vec2D max, int padding = 0) => GeneratePoints(X, max.X, Y, max.Y, padding);
+    public IEnumerable<Vec2D> GeneratePoints(Vec2D max, int padding = 0) => GeneratePoints(this, max, padding);
 
     /// <summary>
     ///     Returns all points in a rectangle, or line, between <see cref="Zero" /> and this vector as the max (both
@@ -110,14 +110,10 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
 
     /// <summary>
     ///     Returns all points in a rectangle, or line, between this vector and an <paramref name="other" /> opposite
-    ///     corner point, inclusive.
+    ///     corner point.
     /// </summary>
-    public IEnumerable<Vec2D> GeneratePointsInclusive(Vec2D other, int padding = 0)
-    {
-        int minX = Math.Min(X, other.X), maxX = Math.Max(X, other.X);
-        int minY = Math.Min(Y, other.Y), maxY = Math.Max(Y, other.Y);
-        return GeneratePointsInclusive(minX, maxX, minY, maxY, padding);
-    }
+    public IEnumerable<Vec2D> GeneratePointsInclusive(Vec2D other, int padding = 0) =>
+        GeneratePointsInclusive(this, other, padding);
 
     /// <summary>
     ///     Returns all positions in a diamond pattern that is between <paramref name="minDistance" /> (default 0) and
@@ -217,27 +213,39 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
     /// <summary>Returns the dot product of two vectors.</summary>
     public static int Dot(Vec2D a, Vec2D b) => a.X * b.X + a.Y * b.Y;
 
-    /// <summary>Returns all points in a rectangle, or line, between 0 (inclusive) and max (exclusive).</summary>
-    public static IEnumerable<Vec2D> GeneratePoints(int xMax, int yMax, int padding = 0) =>
-        GeneratePoints(0, xMax, 0, yMax, padding);
+    /// <summary>Returns all points in a rectangle, or line, between min (inclusive) and max (exclusive).</summary>
+    public static IEnumerable<Vec2D> GeneratePoints(Vec2D min, Vec2D max, int padding = 0) =>
+        GeneratePoints(min.X, max.X, min.Y, max.Y, padding);
 
-    /// <summary>Returns all points in a rectangle, or line, between the min (inclusive) and max (exclusive).</summary>
-    public static IEnumerable<Vec2D> GeneratePoints(int xMin, int xMax, int yMin, int yMax, int padding = 0)
+    /// <summary>Returns all points in a rectangle, or line, between 0 (inclusive) and max (exclusive).</summary>
+    public static IEnumerable<Vec2D> GeneratePoints(int maxX, int maxY, int padding = 0) =>
+        GeneratePoints(0, maxX, 0, maxY, padding);
+
+    /// <summary>Returns all points in a rectangle, or line, between min (inclusive) and max (exclusive).</summary>
+    public static IEnumerable<Vec2D> GeneratePoints(int minX, int maxX, int minY, int maxY, int padding = 0)
     {
-        for (var x = xMin + padding; x < xMax - padding; x++)
-            for (var y = yMin + padding; y < yMax - padding; y++)
+        for (var x = minX + padding; x < maxX - padding; x++)
+            for (var y = minY + padding; y < maxY - padding; y++)
                 yield return new Vec2D(x, y);
     }
 
-    /// <summary>Returns all points in a rectangle, or line, between the 0 and max (both inclusive).</summary>
-    public static IEnumerable<Vec2D> GeneratePointsInclusive(int xMax, int yMax, int padding = 0) =>
-        GeneratePointsInclusive(0, xMax, 0, yMax, padding);
-
-    /// <summary>Returns all points in a rectangle, or line, between the min and max (both inclusive).</summary>
-    public static IEnumerable<Vec2D> GeneratePointsInclusive(int xMin, int xMax, int yMin, int yMax, int padding = 0)
+    /// <summary>Returns all points in a rectangle, or line, between two vectors (inclusive).</summary>
+    public static IEnumerable<Vec2D> GeneratePointsInclusive(Vec2D a, Vec2D b, int padding = 0)
     {
-        for (var x = xMin + padding; x <= xMax - padding; x++)
-            for (var y = yMin + padding; y <= yMax - padding; y++)
+        int minX = Math.Min(a.X, b.X), maxX = Math.Max(a.X, b.X);
+        int minY = Math.Min(a.Y, b.Y), maxY = Math.Max(a.Y, b.Y);
+        return GeneratePointsInclusive(minX, maxX, minY, maxY, padding);
+    }
+
+    /// <summary>Returns all points in a rectangle, or line, between 0 and max (both inclusive).</summary>
+    public static IEnumerable<Vec2D> GeneratePointsInclusive(int maxX, int maxY, int padding = 0) =>
+        GeneratePointsInclusive(0, maxX, 0, maxY, padding);
+
+    /// <summary>Returns all points in a rectangle, or line, between min and max (both inclusive).</summary>
+    public static IEnumerable<Vec2D> GeneratePointsInclusive(int minX, int maxX, int minY, int maxY, int padding = 0)
+    {
+        for (var x = minX + padding; x <= maxX - padding; x++)
+            for (var y = minY + padding; y <= maxY - padding; y++)
                 yield return new Vec2D(x, y);
     }
 
@@ -269,25 +277,23 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
     }
 
     /// <summary>
-    ///     Returns two floats which show the percentage that <paramref name="value" /> is between <paramref name="a" />
-    ///     and <paramref name="b" />. Not clamped: may return values outside 0 to 1 range.
+    ///     Returns a value as the percentage that <paramref name="value" /> is between <paramref name="a" /> and
+    ///     <paramref name="b" />. Not clamped: may return values outside the 0 to 1 range.
     /// </summary>
-    public static (float tX, float tY) InverseLerp(Vec2D value, Vec2D a, Vec2D b)
+    public static double InverseLerp(Vec2D value, Vec2D a, Vec2D b)
     {
-        var tX = a.X != b.X ? (value.X - a.X) / (float)(b.X - a.X) : 0f;
-        var tY = a.Y != b.Y ? (value.Y - a.Y) / (float)(b.Y - a.Y) : 0f;
-        return (tX, tY);
+        var ab = b - a;
+        var av = value - a;
+        double abLengthSquared = ab.LengthSquared();
+        return abLengthSquared == 0 ? 0 : Dot(av, ab) / abLengthSquared;
     }
 
     /// <summary>
-    ///     Returns two floats which show the percentage that <paramref name="value" /> is between <paramref name="a" />
-    ///     and <paramref name="b" />. Clamped: will return values between 0 and 1.
+    ///     Returns a value as the percentage that <paramref name="value" /> is between <paramref name="a" /> and
+    ///     <paramref name="b" />. Clamped: will return values between 0 and 1.
     /// </summary>
-    public static (float tX, float tY) InverseLerpClamped(Vec2D value, Vec2D a, Vec2D b)
-    {
-        var (tX, tY) = InverseLerp(value, a, b);
-        return (Math.Clamp(tX, 0f, 1f), Math.Clamp(tY, 0f, 1f));
-    }
+    public static double InverseLerpClamped(Vec2D value, Vec2D a, Vec2D b) =>
+        Math.Clamp(InverseLerp(value, a, b), 0, 1);
 
     /// <summary>Returns the length, or magnitude, of the vector <paramref name="value" />.</summary>
     public static double Length(Vec2D value) => Math.Sqrt(LengthSquared(value));
@@ -295,8 +301,8 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
     /// <summary>Returns the squared length, or magnitude, of the vector <paramref name="value" />.</summary>
     public static int LengthSquared(Vec2D value) => value.X * value.X + value.Y * value.Y;
 
-    /// <summary>Performs a linear interpolation between two vectors based on the given weighting (0f to 1f).</summary>
-    public static Vec2D Lerp(Vec2D a, Vec2D b, float weight)
+    /// <summary>Performs a linear interpolation between two vectors based on the given weighting (0 to 1).</summary>
+    public static Vec2D Lerp(Vec2D a, Vec2D b, double weight)
     {
         var x = (int)Math.Round(a.X + (b.X - a.X) * weight);
         var y = (int)Math.Round(a.Y + (b.Y - a.Y) * weight);
@@ -310,26 +316,23 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
     public static bool LineIntersect(Vec2D pt1, Vec2D dir1, Vec2D pt2, Vec2D dir2, out Vec2D intersection)
     {
         intersection = Zero;
-        var det = Determinant(dir1, dir2);
+        var det = Determinant(dir2, dir1);
         if (det == 0) return false;
 
-        var delta = pt2 - pt1;
-        var t = (float)Determinant(delta, dir2) / det;
-        var s = (float)Determinant(delta, dir1) / det;
-        intersection = new Vec2D(pt1.X + (int)Math.Round(t * dir1.X), pt1.Y + (int)Math.Round(t * dir1.Y));
-        var intersection2 = new Vec2D(pt2.X + (int)Math.Round(s * dir2.X), pt2.Y + (int)Math.Round(s * dir2.Y));
+        float quotient1 = dir2.X * (pt2.Y - pt1.Y) - dir2.Y * (pt2.X - pt1.X);
+        var t = quotient1 / det;
+        intersection = new Vec2D((int)Math.Round(pt1.X + t * dir1.X), (int)Math.Round(pt1.Y + t * dir1.Y));
+
+        float quotient2 = dir1.X * (pt1.Y - pt2.Y) - dir1.Y * (pt1.X - pt2.X);
+        var s = -quotient2 / det;
+        var intersection2 = new Vec2D((int)Math.Round(pt2.X + s * dir2.X), (int)Math.Round(pt2.Y + s * dir2.Y));
 
         return intersection == intersection2;
     }
 
     /// <summary>Re-maps a vector from one range to another.</summary>
-    public static Vec2D Map(Vec2D value, Vec2D fromMin, Vec2D fromMax, Vec2D toMin, Vec2D toMax)
-    {
-        var (tX, tY) = InverseLerp(value, fromMin, fromMax);
-        var x = (int)float.Lerp(toMin.X, toMax.X, tX);
-        var y = (int)float.Lerp(toMin.Y, toMax.Y, tY);
-        return new Vec2D(x, y);
-    }
+    public static Vec2D Map(Vec2D value, Vec2D fromMin, Vec2D fromMax, Vec2D toMin, Vec2D toMax) =>
+        Lerp(toMin, toMax, InverseLerp(value, fromMin, fromMax));
 
     /// <summary>Returns a vector whose elements are the maximum of each pair-wise.</summary>
     public static Vec2D Max(Vec2D a, Vec2D b) => new(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));

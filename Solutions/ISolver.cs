@@ -8,12 +8,12 @@ public interface ISolver
 {
     public void Setup(string[] input);
     public object? SolvePart1();
-    public object? SolvePart2();
+    public object? SolvePart2() => null;
 }
 
 public static class SolverFactory
 {
-    // unused, but here's how you *could* get Year and Day from a Solution
+    // unused, but here's how you *could* get Year and Day from an instance of a Solution
     // public static int Year(this ISolver solver) => int.Parse(solver.GetType().Namespace![^8..^4]);
     // public static int Day(this ISolver solver) => int.Parse(solver.GetType().Namespace![^2..]);
 

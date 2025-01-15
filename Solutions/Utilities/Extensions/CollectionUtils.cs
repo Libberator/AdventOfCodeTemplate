@@ -34,25 +34,23 @@ public static partial class Utils
             i = max - (max - min) / 2;
         }
 
-        return predicate(list[min]) ? min
-            : predicate(list[max]) ? max
-            : -1;
+        return predicate(list[min]) ? min : predicate(list[max]) ? max : -1;
     }
 
-    /// <summary>
-    ///     Searches between two values, inclusive, and returns first value which passes the condition. Throws if none found.
-    /// </summary>
-    public static int BinarySearch(this int min, int max, Predicate<int> check)
+    /// <summary>Searches between two values, inclusive, according to a condition.</summary>
+    /// <returns>The first value that passes the condition. Otherwise, -1</returns>
+    public static T BinarySearch<T>(T min, T max, Predicate<T> check) where T : INumber<T>
     {
-        var index = max - (max - min) / 2;
-        while (min + 1 < max)
+        var two = T.One + T.One;
+        var index = max - (max - min) / two;
+        while (min + T.One < max)
         {
             if (check(index)) max = index;
             else min = index;
-            index = max - (max - min) / 2;
+            index = max - (max - min) / two;
         }
 
-        return check(min) ? min : check(max) ? max : throw new Exception("Not found");
+        return check(min) ? min : check(max) ? max : -T.One;
     }
 
     /// <summary>
@@ -62,24 +60,25 @@ public static partial class Utils
         Predicate<T>? skipPredicate = null)
     {
         var chunks = new List<T[]>();
-        var enumerable = source as IList<T> ?? source.ToArray();
+        var array = source as T[] ?? source.ToArray();
         skipPredicate ??= el => !takePredicate(el);
 
-        for (var i = 0; i < enumerable.Count;)
+        var takeIndex = 0;
+        for (var i = 0; i < array.Length; i++)
         {
-            var chunk = enumerable
-                .Skip(i)
-                .TakeWhile(takePredicate.Invoke)
-                .ToArray();
+            if (takePredicate(array[i])) continue;
+            if (i - takeIndex > 0)
+                chunks.Add(array[takeIndex..i]);
 
-            if (chunk.Length > 0) chunks.Add(chunk);
+            for (var j = i + 1; j < array.Length; j++)
+                if (skipPredicate(array[j])) i++;
+                else break;
 
-            i += chunk.Length;
-            i += enumerable
-                .Skip(i)
-                .TakeWhile(skipPredicate.Invoke)
-                .Count();
+            takeIndex = i + 1;
         }
+
+        if (takeIndex < array.Length && takePredicate(array[^1]))
+            chunks.Add(array[takeIndex..]);
 
         return chunks;
     }

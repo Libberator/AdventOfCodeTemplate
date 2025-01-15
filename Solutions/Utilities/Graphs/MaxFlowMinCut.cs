@@ -16,9 +16,12 @@ public static partial class Graph
     /// <param name="capacities">Cost, or maximum capacity, for the edge between two vertices</param>
     /// <param name="source">Start vertex to originate from</param>
     /// <param name="sink">The target vertex to end our flow into</param>
-    /// <returns>The maximum flow that can travel through the flow network</returns>
-    public static int GetMaxFlow<T>(Dictionary<T, HashSet<T>> adjacencyList, Dictionary<(T, T), int> capacities,
-        T source, T sink) where T : notnull
+    /// <returns>
+    ///     The maximum flow that can travel through the flow network (a.k.a. min cut) and the subgraph with source
+    ///     after the cut (the other subgraph can be easily inferred)
+    /// </returns>
+    public static (int MaxFlowMinCut, IList<T> Subgraph) GetMaxFlowMinCut<T>(Dictionary<T, HashSet<T>> adjacencyList,
+        Dictionary<(T From, T To), int> capacities, T source, T sink) where T : notnull
     {
         // Create residual capacities (copy of capacities which we will adjust)
         var residualCapacities = new Dictionary<(T, T), int>(capacities);
@@ -27,7 +30,9 @@ public static partial class Graph
 
         while (true)
         {
-            if (!TryFindShortestPath(source, sink, GetNeighbors, out var path)) break; // BFS
+            // BFS
+            if (!TryFindShortestPath(source, sink, GetNeighbors, out var path))
+                return (maxFlow, path);
 
             // Find the minimum residual capacity along the path
             var pathFlow = int.MaxValue;
@@ -52,8 +57,6 @@ public static partial class Graph
             maxFlow += pathFlow;
         }
 
-        return maxFlow;
-
         IEnumerable<T> GetNeighbors(T node)
         {
             if (!adjacencyList.TryGetValue(node, out var neighbors) || neighbors.Count == 0)
@@ -71,21 +74,55 @@ public static partial class Graph
     ///     compute the max flow in a flow network. This is also equivalent to total weight of the edges in a minimum cut
     ///     via the <see href="https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem">max-flow min-cut theorem</see>.
     /// </summary>
+    /// <remarks>This overload will use the capacities to create a directed adjacency list given the (From, To) keys</remarks>
     /// <param name="capacities">Cost, or maximum capacity, for the edge between two vertices</param>
     /// <param name="source">Start vertex to originate from</param>
     /// <param name="sink">The target vertex to end our flow into</param>
-    /// <returns>The maximum flow that can travel through the flow network</returns>
-    public static int GetMaxFlow<T>(Dictionary<(T, T), int> capacities, T source, T sink) where T : notnull
+    /// <returns>
+    ///     The maximum flow that can travel through the flow network (a.k.a. min cut) and the subgraph with source
+    ///     after the cut (the other subgraph can be easily inferred)
+    /// </returns>
+    public static (int MaxFlowMinCut, IList<T> Subgraph) GetMaxFlowMinCut<T>(Dictionary<(T From, T To), int> capacities,
+        T source, T sink) where T : notnull
     {
         var adjacencyList = new Dictionary<T, HashSet<T>>();
 
         foreach (var (from, to) in capacities.Keys)
         {
-            if (!adjacencyList.ContainsKey(from))
-                adjacencyList[from] = [];
+            adjacencyList.TryAdd(from, []);
             adjacencyList[from].Add(to);
         }
 
-        return GetMaxFlow(adjacencyList, capacities, source, sink);
+        return GetMaxFlowMinCut(adjacencyList, capacities, source, sink);
+    }
+
+    /// <summary>
+    ///     Execute the <see href="https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm">Edmonds-Karp algorithm</see>
+    ///     (an implementation of the
+    ///     <see href="https://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm">Ford-Fulkerson method</see>) to
+    ///     compute the max flow in a flow network. This is also equivalent to total weight of the edges in a minimum cut
+    ///     via the <see href="https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem">max-flow min-cut theorem</see>.
+    /// </summary>
+    /// <remarks>This overload creates an unweighted graph. In other words, all capacities will default to 1</remarks>
+    /// <param name="adjacencyList">A lookup table for which vertices can be immediately reached from a vertex</param>
+    /// <param name="source">Start vertex to originate from</param>
+    /// <param name="sink">The target vertex to end our flow into</param>
+    /// <returns>
+    ///     The maximum flow that can travel through the flow network (a.k.a. min cut) and the subgraph with source
+    ///     after the cut (the other subgraph can be easily inferred)
+    /// </returns>
+    public static (int MaxFlowMinCut, IList<T> Subgraph) GetMaxFlowMinCut<T>(Dictionary<T, HashSet<T>> adjacencyList,
+        T source, T sink) where T : notnull
+    {
+        var capacities = new Dictionary<(T, T), int>();
+
+        foreach (var (from, toSet) in adjacencyList)
+            foreach (var to in toSet)
+            {
+                capacities[(from, to)] = 1;
+                capacities[(to, from)] = 1;
+            }
+
+        return GetMaxFlowMinCut(adjacencyList, capacities, source, sink);
     }
 }

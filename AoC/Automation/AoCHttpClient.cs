@@ -15,7 +15,7 @@ public class AoCHttpClient : IDisposable
     private const string Domain = "https://adventofcode.com";
     private const string UserSessionName = "session";
     private const string HeaderName = "user-agent";
-    private const string HeaderValue = $".NET/9.0 (github.com/libberator/AdventOfCode via {nameof(AoCHttpClient)}.cs)";
+    private const string HeaderValue = $".NET/9.0 (github.com/Libberator/AdventOfCode via {nameof(AoCHttpClient)}.cs)";
 
     private static DateTimeOffset _nextAllowedRequestTime = DateTimeOffset.UnixEpoch;
     private static readonly SemaphoreSlim Semaphore = new(1, 1);

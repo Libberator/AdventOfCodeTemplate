@@ -208,7 +208,7 @@ public static class Program
     private static async Task DefaultHandler(RootCommand root, bool quit)
     {
         if (quit) Environment.Exit(0);
-        string? defaultArgs;
+        var defaultArgs = "--help";
 #if DEBUG
         try
         {
@@ -218,8 +218,8 @@ public static class Program
         catch (Exception e)
         {
             Logger.Log(
-                $"An error occurred while trying to read or parse DefaultArgs from 'appsettings.Development.json'." +
-                $" Did you add it to your .csproj and <CopyToOutputDirectory>?\n{e.Message}", ConsoleColor.DarkRed);
+                $"An error occurred while trying to read or parse DefaultArgs from 'appsettings.Development.json'. " +
+                $"Did you add it to your .csproj and <CopyToOutputDirectory>?\n{e.Message}", ConsoleColor.DarkRed);
             return;
         }
 #endif
