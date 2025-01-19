@@ -99,12 +99,17 @@ Note: The `--year`/`-y` and `--day`/`-d` options only support single values for 
 
 When you run the Test Runner, it will create test cases for you based off of your `D##TestCase.yaml` files
 
-Don't have any test files yet? Run the generator (made as an Explicit Test) and it will automatically generate test case
-template files for you, matching which `Solution.cs` files you have. Recommend doing that after you've run `init`
+Don't have any test case files yet? Run the generator (made as an Explicit Test) and it will automatically generate test
+case template files for you, matching which `Solution.cs` files you have. Recommend doing that after you've run `init`
 
-Why Yaml? It supports multi-line inputs very nicely (JSON does not), and there's very little boilerplate or distracting
-syntax (e.g. XML/HTML tags). I could've created my own format and parser, but that would needlessly add a barrier to
-entry for other people to use this project
+### Known Limitation(s)
+
+I chose Yaml because it supports multi-line inputs very nicely (default JSON does not), and there's very little
+boilerplate or distracting syntax. However, a known problem is when the **first line of the Input starts with white-space**
+(e.g. Year 2022, Days [5](https://adventofcode.com/2022/day/5) & [22](https://adventofcode.com/2022/day/22)).
+It won't know how to parse it. As a workaround (read: hack), you can:
+- Place a dummy character at the start of the first line only if it won't affect your solution
+- Otherwise, you can manually make it a long single-line "string in quotes" with newline `\n` characters 
 
 ### Custom Test Values
 Some puzzles have test cases that require a different parameter for your solver to use (e.g. specific grid size or number
@@ -131,9 +136,9 @@ Some restrictions on using this attribute:
 If you want to get any updates from the template, you can do it automatically via setting up a
 [GitHub Action to Sync with Template](https://github.com/marketplace/actions/actions-template-sync) or you can do it manually with the following git commands:
 ```
-git remote add template https://github.com/Libberator/AdventOfCodeTemplate.git
-git fetch template   // or `git fetch --all`
-git merge --squash template/main --allow-unrelated-histories
+git remote add upstream https://github.com/Libberator/AdventOfCodeTemplate.git
+git fetch upstream   // or `git fetch --all`
+git merge --squash upstream/main --allow-unrelated-histories
 ```
 
 ## Dependencies

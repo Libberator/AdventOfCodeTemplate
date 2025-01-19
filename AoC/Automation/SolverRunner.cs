@@ -27,8 +27,8 @@ public class SolverRunner(AoCServiceProvider aoCServiceProvider)
         // Generate Solver file if it doesn't exist
         var generatedSolver = SolverTemplate.Generate(year, day);
         if (generatedSolver)
-            Logger.Log($"Notice: The Assembly must be reloaded (i.e. run it again) before the generated solver " +
-                       $"'Solutions/{year}/{day:D2}/Solution.cs' can be used", ConsoleColor.Yellow);
+            Logger.Log($"Notice: The Assembly must be reloaded (i.e. run it again) before the generated solver at " +
+                       $"{inputPath}' can be used", ConsoleColor.Yellow);
 
         // Check locally for input file. If it's not found, and we can fetch, fetch for it
         var hasInput = File.Exists(inputPath);

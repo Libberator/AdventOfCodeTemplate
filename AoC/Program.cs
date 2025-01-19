@@ -91,7 +91,8 @@ public static class Program
             "Run specified solution(s). Will automatically generate a solution and fetch input (unless --no-fetch) if missing. " +
             "Runs the latest solver by default")
         {
-            yearsOptionLatest, daysOptionLatest, inputFileOption, noFetchOption, noTimerOption, submitPartOption, waitOption
+            yearsOptionLatest, daysOptionLatest, inputFileOption, noFetchOption, noTimerOption, submitPartOption,
+            waitOption
         };
         solveCommand.SetHandler(SolveHandler, yearsOptionLatest, daysOptionLatest, inputFileOption,
             noFetchOption, noTimerOption, submitPartOption, waitOption, quitOption);
@@ -110,7 +111,8 @@ public static class Program
         {
             partArgument, answerArgument, yearOption, dayOption, waitOption
         };
-        submitCommand.SetHandler(SubmitHandler, yearOption, dayOption, partArgument, answerArgument, waitOption, quitOption);
+        submitCommand.SetHandler(SubmitHandler, yearOption, dayOption, partArgument, answerArgument, waitOption,
+            quitOption);
 
         #endregion
 
@@ -160,46 +162,37 @@ public static class Program
 
     private static void InitHandler(string yearsInput, string daysInput, bool force, bool quit)
     {
-        ThrowHelper.Try(() =>
-        {
-            var years = ParseNumbers(yearsInput);
-            var days = ParseNumbers(daysInput);
-            SolverTemplate.Generate(years, days, force);
-        });
+        var years = ParseNumbers(yearsInput);
+        var days = ParseNumbers(daysInput);
+        SolverTemplate.Generate(years, days, force);
         if (quit) Environment.Exit(0);
     }
 
     private static async Task FetchHandler(string yearsInput, string daysInput, string? inputDir, bool force, bool wait,
         bool quit)
     {
-        await ThrowHelper.TryAsync(async () =>
-        {
-            var years = ParseNumbers(yearsInput);
-            var days = ParseNumbers(daysInput);
-            await (years.Length == 1 && days.Length == 1
-                ? Provider.Fetch(years[0], days[0], inputDir, force, wait)
-                : Provider.FetchAll(years, days, force, wait));
-        });
+        var years = ParseNumbers(yearsInput);
+        var days = ParseNumbers(daysInput);
+        await (years.Length == 1 && days.Length == 1
+            ? Provider.Fetch(years[0], days[0], inputDir, force, wait)
+            : Provider.FetchAll(years, days, force, wait));
         if (quit) Environment.Exit(0);
     }
 
     private static async Task SolveHandler(string yearsInput, string daysInput, string? inputPath, bool noFetch,
         bool noTimer, int submitPart, bool wait, bool quit)
     {
-        await ThrowHelper.TryAsync(async () =>
-        {
-            var years = ParseNumbers(yearsInput);
-            var days = ParseNumbers(daysInput);
-            await (years.Length == 1 && days.Length == 1
-                ? Runner.Run(years[0], days[0], inputPath, noFetch, noTimer, submitPart, wait)
-                : Runner.RunAll(years, days, noFetch, noTimer));
-        });
+        var years = ParseNumbers(yearsInput);
+        var days = ParseNumbers(daysInput);
+        await (years.Length == 1 && days.Length == 1
+            ? Runner.Run(years[0], days[0], inputPath, noFetch, noTimer, submitPart, wait)
+            : Runner.RunAll(years, days, noFetch, noTimer));
         if (quit) Environment.Exit(0);
     }
 
     private static async Task SubmitHandler(int year, int day, int part, string? answer, bool wait, bool quit)
     {
-        await ThrowHelper.TryAsync(async () => await Provider.Submit(year, day, part, answer, wait));
+        await Provider.Submit(year, day, part, answer, wait);
         if (quit) Environment.Exit(0);
     }
 

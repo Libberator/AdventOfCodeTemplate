@@ -5,14 +5,10 @@ using System.Text.RegularExpressions;
 using AoC.Solutions;
 using NUnit.Framework;
 
-// ReSharper disable UnusedMember.Local
-
 namespace Aoc.Tests;
 
-/// <summary>
-///     Automates tests to match what solutions are available. To generate test files, run the standard tests
-///     (it will call the generator if it's missing test files) or run the Generator method manually.
-/// </summary>
+/// <summary>Automates tests to match what solutions and test case files are available.</summary>
+/// <remarks>To generate test case files, run the explicit test <see cref="GenerateMissingTestFilesAndFolders" /></remarks>
 public static class SolutionTests
 {
     /* Adjust year(s) here */
