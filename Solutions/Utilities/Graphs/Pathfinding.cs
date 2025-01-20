@@ -19,7 +19,7 @@ public static partial class Graph
     /// </param>
     /// <param name="getCost">Get the cost between two vertices. Defaults to 1 (unweighted)</param>
     /// <returns>A lookup table of the cost from any vertex to any other vertex</returns>
-    public static IDictionary<(T From, T To), int> FindShortestPathCosts<T>(IDictionary<T, HashSet<T>> adjacencyList,
+    public static Dictionary<(T From, T To), int> FindShortestPathCosts<T>(IDictionary<T, HashSet<T>> adjacencyList,
         Func<T, T, int>? getCost = null) where T : notnull
     {
         const int inf = int.MaxValue / 2 - 1;
