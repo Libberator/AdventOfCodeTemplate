@@ -66,12 +66,11 @@ public class SolverRunner(AoCServiceProvider aoCServiceProvider)
         timer.Restart();
         var p1Result = solver.SolvePart1();
         var part1 = timer.Elapsed;
+        Logger.Log($"Part 1: {p1Result}", ConsoleColor.White);
 
         timer.Restart();
         var p2Result = solver.SolvePart2();
         var part2 = timer.Elapsed;
-
-        Logger.Log($"Part 1: {p1Result}", ConsoleColor.White);
         Logger.Log($"Part 2: {p2Result}", ConsoleColor.White);
 
         if (!noTimer) LogTimes(("Setup", setup), ("Part 1", part1), ("Part 2", part2));

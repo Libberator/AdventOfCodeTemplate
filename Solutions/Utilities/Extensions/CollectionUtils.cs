@@ -7,22 +7,12 @@ namespace AoC.Utilities.Extensions;
 
 public static partial class Utils
 {
-    /// <summary>Adds the value to an existing key-value pair or creates a new one if one does not exist.</summary>
-    /// <returns>False if a new key-value pair was created (with added value). True if one was already in the dictionary</returns>
-    public static bool AddToExistingOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue val)
-        where TValue : INumber<TValue>
-    {
-        if (dict.TryAdd(key, val)) return false;
-        dict[key] += val;
-        return true;
-    }
-
     /// <summary>Searches an ordered list for the first (i.e. earliest) occurrence of the predicate returning true.</summary>
     /// <param name="list">Source list to search. Assumes it's sorted for false returns first and true results later</param>
     /// <param name="predicate">Condition to check against</param>
     /// <param name="min">Start index, inclusive</param>
     /// <param name="max">Stop index, inclusive (defaults to <paramref name="list" />.Count - 1)</param>
-    /// <returns>The index for the first element the predicate returned true for. Returns -1 if predicate never passes</returns>
+    /// <returns>The first index that passes the predicate. Returns -1 if predicate never passes</returns>
     public static int BinarySearch<T>(this IList<T> list, Predicate<T> predicate, int min = 0, int max = -1)
     {
         max = max == -1 ? list.Count - 1 : max;
@@ -37,26 +27,26 @@ public static partial class Utils
         return predicate(list[min]) ? min : predicate(list[max]) ? max : -1;
     }
 
-    /// <summary>Searches between two values, inclusive, according to a condition.</summary>
-    /// <returns>The first value that passes the condition. Otherwise, -1</returns>
-    public static T BinarySearch<T>(T min, T max, Predicate<T> check) where T : INumber<T>
+    /// <summary>Generic binary search. Searches between two values, inclusive, according to a condition.</summary>
+    /// <returns>The first value that passes the predicate. Otherwise, -1</returns>
+    public static T BinarySearch<T>(T min, T max, Predicate<T> predicate) where T : INumber<T>
     {
         var two = T.One + T.One;
         var index = max - (max - min) / two;
         while (min + T.One < max)
         {
-            if (check(index)) max = index;
+            if (predicate(index)) max = index;
             else min = index;
             index = max - (max - min) / two;
         }
 
-        return check(min) ? min : check(max) ? max : -T.One;
+        return predicate(min) ? min : predicate(max) ? max : -T.One;
     }
 
     /// <summary>
     ///     Chunk the source based on a <paramref name="takePredicate" /> and an optional <paramref name="skipPredicate" />.
     /// </summary>
-    public static IList<T[]> ChunkBy<T>(this IEnumerable<T> source, Predicate<T> takePredicate,
+    public static List<T[]> ChunkBy<T>(this IEnumerable<T> source, Predicate<T> takePredicate,
         Predicate<T>? skipPredicate = null)
     {
         var chunks = new List<T[]>();
@@ -96,14 +86,6 @@ public static partial class Utils
 
     /// <summary>This will return 1 column of data from a 2D jagged array into a single array.</summary>
     public static T[] GetColumnData<T>(this T[][] values, int column) => values.Select(x => x[column]).ToArray();
-
-    /// <summary>
-    ///     Adds a key/value pair to the <see cref="IDictionary{TKey,TValue}" /> if the key does not already exist.
-    ///     Return the pre-existing or newly generated value for the key.
-    /// </summary>
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key,
-        Func<TKey, TValue> valueFactory) =>
-        dict.TryGetValue(key, out var resultingValue) ? resultingValue : dict[key] = valueFactory(key);
 
     public static string JoinAsString<T>(this IEnumerable<T> source, char delimiter = ',') =>
         string.Join(delimiter, source);

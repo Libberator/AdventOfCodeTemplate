@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AoC.Utilities.Graphs;
+namespace AoC.Utilities.Algorithms;
 
 public static partial class Graph
 {
@@ -30,10 +30,12 @@ public static partial class Graph
 
         while (true)
         {
-            // BFS
-            if (!TryFindShortestPath(source, sink, GetNeighbors, out var path))
-                return (maxFlow, path);
-
+            // DFS
+            var path = Pathfinding.FindAnyPath(source, sink, GetNeighbors);
+            if (path.Count == 0)
+                return (maxFlow, Pathfinding.FloodFill(source, GetNeighbors));
+            
+            
             // Find the minimum residual capacity along the path
             var pathFlow = int.MaxValue;
             for (var i = 0; i < path.Count - 1; i++)

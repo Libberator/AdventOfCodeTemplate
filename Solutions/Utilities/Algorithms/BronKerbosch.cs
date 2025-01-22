@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AoC.Utilities.Graphs;
+namespace AoC.Utilities.Algorithms;
 
 public static partial class Graph
 {

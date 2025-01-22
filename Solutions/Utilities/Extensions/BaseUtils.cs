@@ -4,37 +4,23 @@ namespace AoC.Utilities.Extensions;
 
 public partial class Utils
 {
-    /// <summary>Given a char from '0' to 'F', return a 4-length string of 1's and 0's.</summary>
+    /// <summary>Given a char from [0-9, A-F, a-f], return a 4-length string of 1's and 0's.</summary>
     public static string HexToBinary(this char hexChar) => hexChar switch
     {
-        '0' => "0000",
-        '1' => "0001",
-        '2' => "0010",
-        '3' => "0011",
-        '4' => "0100",
-        '5' => "0101",
-        '6' => "0110",
-        '7' => "0111",
-        '8' => "1000",
-        '9' => "1001",
-        'A' or 'a' => "1010",
-        'B' or 'b' => "1011",
-        'C' or 'c' => "1100",
-        'D' or 'd' => "1101",
-        'E' or 'e' => "1110",
-        'F' or 'f' => "1111",
-        _ => throw new ArgumentOutOfRangeException(nameof(hexChar),
-            $"Unable to convert hexadecimal char to binary: '{hexChar}'")
+        >= '0' and <= '9' => Convert.ToString(hexChar - '0', 2).PadLeft(4, '0'),
+        >= 'A' and <= 'F' => Convert.ToString(hexChar - 'A' + 10, 2).PadLeft(4, '0'),
+        >= 'a' and <= 'f' => Convert.ToString(hexChar - 'a' + 10, 2).PadLeft(4, '0'),
+        _ => throw new ArgumentException("Unable to convert provided hexadecimal char to binary", nameof(hexChar))
     };
 
     /// <summary>Convert to an arbitrary base, between 2 and 36.</summary>
-    public static string ToBase(this int value, int radix)
+    public static string ToBase(this int value, int toBase)
     {
         const int bitsInInt = 32;
         const string digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        if (radix < 2 || radix > digits.Length)
-            throw new ArgumentException($"The radix must be >= 2 and <= {digits.Length}");
+        if (toBase < 2 || toBase > digits.Length)
+            throw new ArgumentException("Base must be in the range 2 to 36.", nameof(toBase));
 
         var i = bitsInInt - 1;
         var currentNumber = Math.Abs(value);
@@ -42,8 +28,8 @@ public partial class Utils
 
         while (currentNumber != 0)
         {
-            buffer[i--] = digits[currentNumber % radix];
-            currentNumber /= radix;
+            buffer[i--] = digits[currentNumber % toBase];
+            currentNumber /= toBase;
         }
 
         var result = new string(buffer, i + 1, bitsInInt - i - 1); // char[32 - i];
@@ -54,13 +40,13 @@ public partial class Utils
     }
 
     /// <summary>Convert to an arbitrary base, between 2 and 36.</summary>
-    public static string ToBase(this long value, int radix)
+    public static string ToBase(this long value, int toBase)
     {
         const int bitsInLong = 64;
         const string digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        if (radix < 2 || radix > digits.Length)
-            throw new ArgumentException($"The radix must be >= 2 and <= {digits.Length}");
+        if (toBase < 2 || toBase > digits.Length)
+            throw new ArgumentException("Base must be in the range 2 to 36.", nameof(toBase));
 
         if (value == 0)
             return "0";
@@ -71,9 +57,9 @@ public partial class Utils
 
         while (currentNumber != 0)
         {
-            var remainder = (int)(currentNumber % radix);
+            var remainder = (int)(currentNumber % toBase);
             buffer[i--] = digits[remainder];
-            currentNumber /= radix;
+            currentNumber /= toBase;
         }
 
         var result = new string(buffer, i + 1, bitsInLong - i - 1);
