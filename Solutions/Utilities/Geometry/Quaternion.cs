@@ -1,4 +1,5 @@
 using System;
+using AoC.Utilities.Extensions;
 
 namespace AoC.Utilities.Geometry;
 
@@ -12,43 +13,30 @@ namespace AoC.Utilities.Geometry;
 /// <param name="Z">The <b>k</b> component of the vector part</param>
 public readonly record struct Quaternion(double W, double X, double Y, double Z)
 {
-    public enum Axis
-    {
-        X,
-        Y,
-        Z,
-        W
-    }
-
-    private const int N90 = -90, P90 = 90, P180 = 180;
-
     public static readonly Quaternion Identity = new(1, 0, 0, 0);
-
-    public static readonly Quaternion N90X = FromAxisAngle(Axis.X, N90);
-    public static readonly Quaternion P90X = FromAxisAngle(Axis.X, P90);
-    public static readonly Quaternion P180X = FromAxisAngle(Axis.X, P180);
-
-    public static readonly Quaternion N90Y = FromAxisAngle(Axis.Y, N90);
-    public static readonly Quaternion P90Y = FromAxisAngle(Axis.Y, P90);
-    public static readonly Quaternion P180Y = FromAxisAngle(Axis.Y, P180);
-
-    /// <summary>When used on a <see cref="Vec2D" />, -90° is a clockwise rotation (i.e. turn right)</summary>
-    public static readonly Quaternion N90Z = FromAxisAngle(Axis.Z, N90);
-
-    /// <summary>When used on a <see cref="Vec2D" />, +90° is a counter-clockwise rotation (i.e. turn left)</summary>
-    public static readonly Quaternion P90Z = FromAxisAngle(Axis.Z, P90);
-
-    public static readonly Quaternion P180Z = FromAxisAngle(Axis.Z, P180);
-
-    private Quaternion(Vec3D vec) : this(0, vec.X, vec.Y, vec.Z)
-    {
-    }
+    public static readonly Quaternion N90X = FromAxisAngle(Axis.X, Angle.N90);
+    public static readonly Quaternion P90X = FromAxisAngle(Axis.X, Angle.P90);
+    public static readonly Quaternion P180X = FromAxisAngle(Axis.X, Angle.P180);
+    public static readonly Quaternion N90Y = FromAxisAngle(Axis.Y, Angle.N90);
+    public static readonly Quaternion P90Y = FromAxisAngle(Axis.Y, Angle.P90);
+    public static readonly Quaternion P180Y = FromAxisAngle(Axis.Y, Angle.P180);
+    public static readonly Quaternion N90Z = FromAxisAngle(Axis.Z, Angle.N90);
+    public static readonly Quaternion P90Z = FromAxisAngle(Axis.Z, Angle.P90);
+    public static readonly Quaternion P180Z = FromAxisAngle(Axis.Z, Angle.P180);
 
     private Quaternion(Vec2D vec) : this(0, vec.X, vec.Y, 0)
     {
     }
 
     private Quaternion(Vec2DLong vec) : this(0, vec.X, vec.Y, 0)
+    {
+    }
+
+    private Quaternion(Vec3D vec) : this(0, vec.X, vec.Y, vec.Z)
+    {
+    }
+
+    private Quaternion(Vec3DLong vec) : this(0, vec.X, vec.Y, vec.Z)
     {
     }
 
@@ -61,7 +49,7 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
     /// <returns>A <see cref="Quaternion" /> representing the rotation</returns>
     /// <exception cref="ArgumentOutOfRangeException">An invalid <see cref="Axis" /> was specified</exception>
     public static Quaternion FromAxisAngle(Axis axis, int angleDeg) =>
-        FromAxisAngle(axis, angleDeg * double.Pi / P180);
+        FromAxisAngle(axis, angleDeg * Angle.Deg2Rad);
 
     public static Quaternion FromAxisAngle(Axis axis, double angleRad) => axis switch
     {
@@ -71,8 +59,13 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
         _ => throw new ArgumentOutOfRangeException(nameof(axis), axis, $"Invalid axis [{axis}]")
     };
 
+    public static Quaternion FromAxisAngle(Vec3D axis, int angleDeg) => FromAxisAngle(axis.X, axis.Y, axis.Z, angleDeg);
+
+    public static Quaternion FromAxisAngle(Vec3DLong axis, int angleDeg) =>
+        FromAxisAngle(axis.X, axis.Y, axis.Z, angleDeg);
+
     public static Quaternion FromAxisAngle(double x, double y, double z, int angleDeg) =>
-        FromAxisAngle(x, y, z, angleDeg * double.Pi / P180);
+        FromAxisAngle(x, y, z, angleDeg * Angle.Deg2Rad);
 
     public static Quaternion FromAxisAngle(double x, double y, double z, double angleRad)
     {
@@ -103,9 +96,14 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
     /// <returns>A normalized quaternion</returns>
     public Quaternion Normalize()
     {
-        var w = Math.Clamp(W, -1, 1);
-        var scaleFactor = Math.Sqrt(1 - w * w) / Math.Sqrt(X * X + Y * Y + Z * Z);
-        return new Quaternion(w, X * scaleFactor, Y * scaleFactor, Z * scaleFactor);
+        var norm = Math.Sqrt(X * X + Y * Y + Z * Z).RemoveError();
+        if (norm == 0) return new Quaternion(W < 0 ? -1 : 1, 0, 0, 0);
+        var w = Math.Clamp(W, -1, 1).RemoveError();
+        var scaleFactor = Math.Sqrt(1 - w * w) / norm;
+        return new Quaternion(w,
+            (X * scaleFactor).RemoveError(),
+            (Y * scaleFactor).RemoveError(),
+            (Z * scaleFactor).RemoveError());
     }
 
     /// <summary>
@@ -113,11 +111,11 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
     /// </summary>
     public void ToAngleAxis(out double angle, out double x, out double y, out double z)
     {
-        angle = Math.Acos(W) * 360 / double.Pi;
-        var norm = Math.Sqrt(X * X + Y * Y + Z * Z);
-        x = X / norm;
-        y = Y / norm;
-        z = Z / norm;
+        angle = 2 * Math.Acos(W) * Angle.Rad2Deg;
+        var norm = Math.Sqrt(X * X + Y * Y + Z * Z).RemoveError();
+        x = norm == 0 ? 0 : X / norm;
+        y = norm == 0 ? 0 : Y / norm;
+        z = norm == 0 ? 0 : Z / norm;
     }
 
     public static Quaternion operator *(Quaternion a, Quaternion b) => new(
@@ -136,7 +134,7 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
     public static Vec2DLong operator *(Quaternion a, Vec2DLong v)
     {
         var result = a * new Quaternion(v) * a.Conjugate();
-        return new Vec2DLong((int)Math.Round(result.X), (int)Math.Round(result.Y));
+        return new Vec2DLong((long)Math.Round(result.X), (long)Math.Round(result.Y));
     }
 
     public static Vec3D operator *(Quaternion a, Vec3D v)
@@ -145,5 +143,11 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
         return new Vec3D((int)Math.Round(result.X), (int)Math.Round(result.Y), (int)Math.Round(result.Z));
     }
 
-    public override string ToString() => $"{W} + <{X}i,{Y}j,{Z}k>";
+    public static Vec3DLong operator *(Quaternion a, Vec3DLong v)
+    {
+        var result = a * new Quaternion(v) * a.Conjugate();
+        return new Vec3DLong((long)Math.Round(result.X), (long)Math.Round(result.Y), (long)Math.Round(result.Z));
+    }
+
+    public override string ToString() => $"{W:g2} + <{X:g2}i,{Y:g2}j,{Z:g2}k>";
 }

@@ -8,6 +8,8 @@ namespace AoC.Utilities.Extensions;
 // Note: To find mathematical formulas for specific sequences, go to https://oeis.org/
 public static partial class Utils
 {
+    private const double Epsilon = 1e-15;
+
     ///<summary>Binomial coefficient. a.k.a. "n choose k". ex. "7 choose 2" = 7 * (7 - 1) / 2 = 21.</summary>
     public static int BinomialChoose(this int n, int k)
     {
@@ -156,6 +158,13 @@ public static partial class Utils
     /// <summary>Similar to Sum(), except each element in the <paramref name="source" /> is multiplied by each other.</summary>
     public static T Product<T>(this IEnumerable<T> source) where T : INumber<T> =>
         source.Aggregate(T.MultiplicativeIdentity, (current, value) => current * value);
+
+    /// <summary>Cleans up any floating-point error when near a whole number.</summary>
+    public static double RemoveError(this double value, double epsilon = Epsilon)
+    {
+        var rounded = Math.Round(value);
+        return Math.Abs(value - rounded) < epsilon ? rounded : value;
+    }
 
     /// <summary>
     ///     Generic solver for a set of linear equations. Expects an NxN matrix of coefficient and N-length array of
