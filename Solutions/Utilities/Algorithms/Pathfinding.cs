@@ -39,7 +39,7 @@ public static class Pathfinding
     /// <param name="start">The start vertex to search from</param>
     /// <param name="goal">The target vertex to end our search</param>
     /// <param name="adjacencyList">An adjacency table to lookup which vertices can be immediately reached from a vertex</param>
-    /// <param name="getCost">Function to get cost to a neighbor</param>
+    /// <param name="getCost">Function to get cost to a neighbor. First argument is current node, second is neighbor</param>
     /// <param name="getHeuristic">Function to get an estimated min cost from a vertex to the <paramref name="goal" /></param>
     /// <returns>
     ///     Outputs the path from <paramref name="start" /> to the <paramref name="goal" /> if successful, inclusive.
@@ -56,7 +56,7 @@ public static class Pathfinding
     /// <param name="start">The start vertex to search from</param>
     /// <param name="goal">The target vertex to end our search</param>
     /// <param name="getNeighbors">Function to get the neighbors of a given vertex</param>
-    /// <param name="getCost">Function to get cost to a neighbor</param>
+    /// <param name="getCost">Function to get cost to a neighbor. First argument is current node, second is neighbor</param>
     /// <param name="getHeuristic">Function to get an estimated min cost from a vertex to the <paramref name="goal" /></param>
     /// <returns>
     ///     Outputs the path from <paramref name="start" /> to the <paramref name="goal" /> if successful, inclusive.
@@ -182,7 +182,7 @@ public static class Pathfinding
     /// <param name="start">The start vertex to search from</param>
     /// <param name="goal">The target vertex to end our search</param>
     /// <param name="adjacencyList">An adjacency table to lookup which vertices can be immediately reached from a vertex</param>
-    /// <param name="getCost">Function to get cost to a neighbor</param>
+    /// <param name="getCost">Function to get cost to a neighbor. First argument is current node, second is neighbor</param>
     /// <returns>
     ///     Outputs the path from <paramref name="start" /> to the <paramref name="goal" /> if successful, inclusive.
     ///     Otherwise, this outputs an empty list.
@@ -198,7 +198,7 @@ public static class Pathfinding
     /// <param name="start">The start vertex to search from</param>
     /// <param name="goal">The target vertex to end our search</param>
     /// <param name="getNeighbors">Function to get the neighbors of a given vertex</param>
-    /// <param name="getCost">Function to get cost to a neighbor</param>
+    /// <param name="getCost">Function to get cost to a neighbor. First argument is current node, second is neighbor</param>
     /// <returns>
     ///     Outputs the path from <paramref name="start" /> to the <paramref name="goal" /> if successful, inclusive.
     ///     Otherwise, this outputs an empty list.
@@ -214,7 +214,7 @@ public static class Pathfinding
     /// <param name="start">The start vertex to search from</param>
     /// <param name="stopCondition">The required condition before stopping</param>
     /// <param name="adjacencyList">An adjacency table to lookup which vertices can be immediately reached from a vertex</param>
-    /// <param name="getCost">Function to get cost to a neighbor</param>
+    /// <param name="getCost">Function to get cost to a neighbor. First argument is current node, second is neighbor</param>
     /// <returns>
     ///     Outputs the path from <paramref name="start" /> to the node we stopped at if successful, inclusive.
     ///     Otherwise, this outputs an empty list.
@@ -230,7 +230,7 @@ public static class Pathfinding
     /// <param name="start">The start vertex to search from</param>
     /// <param name="stopCondition">The required condition before stopping</param>
     /// <param name="getNeighbors">Function to get the neighbors of a given vertex</param>
-    /// <param name="getCost">Function to get cost to a neighbor</param>
+    /// <param name="getCost">Function to get cost to a neighbor. First argument is current node, second is neighbor</param>
     /// <returns>
     ///     Outputs the path from <paramref name="start" /> to the node we stopped at if successful, inclusive.
     ///     Otherwise, this outputs an empty list.

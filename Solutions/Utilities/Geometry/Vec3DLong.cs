@@ -77,25 +77,22 @@ public readonly record struct Vec3DLong(long X, long Y, long Z) : ISpanParsable<
     public Vec3DLong Cross(Vec3DLong other) => Cross(this, other);
 
     /// <summary>Computes the Euclidean distance between this and an <paramref name="other" /> vector.</summary>
-    public double DistanceEuclidean(Vec3DLong other) => Math.Sqrt(DistanceSquared(other));
+    public double DistanceEuclidean(Vec3DLong other) => DistanceEuclidean(this, other);
 
     /// <summary>
     ///     Computes the Chebyshev distance, also known as chessboard distance - the amount of moves a king would take to
     ///     get from a to b.
     /// </summary>
-    public long DistanceChebyshev(Vec3DLong other) =>
-        Math.Max(Math.Max(Math.Abs(other.X - X), Math.Abs(other.Y - Y)), Math.Abs(other.Z - Z));
+    public long DistanceChebyshev(Vec3DLong other) => DistanceChebyshev(this, other);
 
     /// <summary>
     ///     Computes the Manhattan distance (a.k.a. Taxicab distance) between this and an <paramref name="other" /> vector. No
     ///     diagonal moves.
     /// </summary>
-    public long DistanceManhattan(Vec3DLong other) =>
-        Math.Abs(other.X - X) + Math.Abs(other.Y - Y) + Math.Abs(other.Z - Z);
+    public long DistanceManhattan(Vec3DLong other) => DistanceManhattan(this, other);
 
     /// <summary>Returns the Euclidean distance squared between two specified points.</summary>
-    public long DistanceSquared(Vec3DLong other) =>
-        (other.X - X) * (other.X - X) + (other.Y - Y) * (other.Y - Y) + (other.Z - Z) * (other.Z - Z);
+    public long DistanceSquared(Vec3DLong other) => DistanceSquared(this, other);
 
     /// <summary>Returns the dot product of two vectors.</summary>
     public long Dot(Vec3DLong other) => Dot(this, other);
@@ -207,6 +204,24 @@ public readonly record struct Vec3DLong(long X, long Y, long Z) : ISpanParsable<
     /// <summary>Returns the Cross Product of two vectors.</summary>
     public static Vec3DLong Cross(Vec3DLong a, Vec3DLong b) =>
         new(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
+
+    /// <summary>Computes the Euclidean distance between two points.</summary>
+    public static double DistanceEuclidean(Vec3DLong a, Vec3DLong b) => Math.Sqrt(DistanceSquared(a, b));
+
+    /// <summary>
+    ///     Computes the Chebyshev distance, also known as chessboard distance - the amount of moves a king would take to
+    ///     get from a to b.
+    /// </summary>
+    public static long DistanceChebyshev(Vec3DLong a, Vec3DLong b) =>
+        Math.Max(Math.Max(Math.Abs(b.X - a.X), Math.Abs(b.Y - a.Y)), Math.Abs(b.Z - a.Z));
+
+    /// <summary>Computes the Manhattan distance (a.k.a. Taxicab distance) between two points. No diagonal moves.</summary>
+    public static long DistanceManhattan(Vec3DLong a, Vec3DLong b) =>
+        Math.Abs(b.X - a.X) + Math.Abs(b.Y - a.Y) + Math.Abs(b.Z - a.Z);
+
+    /// <summary>Returns the Euclidean distance squared between two points.</summary>
+    public static long DistanceSquared(Vec3DLong a, Vec3DLong b) =>
+        (b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y) + (b.Z - a.Z) * (b.Z - a.Z);
 
     /// <summary>Returns the dot product of two vectors.</summary>
     public static long Dot(Vec3DLong a, Vec3DLong b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
@@ -354,8 +369,9 @@ public readonly record struct Vec3DLong(long X, long Y, long Z) : ISpanParsable<
 
     #region Parsing
 
-    public static Vec3DLong Parse(string s, IFormatProvider? provider = null) =>
-        Parse(s, NumberStyles.Integer, provider);
+    public static Vec3DLong Parse(string s) => Parse(s, null);
+
+    public static Vec3DLong Parse(string s, IFormatProvider? provider) => Parse(s, NumberStyles.Integer, provider);
 
     public static Vec3DLong Parse(string s, NumberStyles style, IFormatProvider? provider = null) =>
         string.IsNullOrEmpty(s) ? throw new ArgumentNullException(s) : Parse(s.AsSpan(), style, provider);

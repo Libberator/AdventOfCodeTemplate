@@ -71,22 +71,22 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
     public int Determinant(Vec2D other) => Determinant(this, other);
 
     /// <summary>Computes the Euclidean distance between this and an <paramref name="other" /> vector.</summary>
-    public double DistanceEuclidean(Vec2D other) => Math.Sqrt(DistanceSquared(other));
+    public double DistanceEuclidean(Vec2D other) => DistanceEuclidean(this, other);
 
     /// <summary>
     ///     Computes the Chebyshev distance, also known as chessboard distance - the amount of moves a king would take to
     ///     get from a to b.
     /// </summary>
-    public int DistanceChebyshev(Vec2D other) => Math.Max(Math.Abs(other.X - X), Math.Abs(other.Y - Y));
+    public int DistanceChebyshev(Vec2D other) => DistanceChebyshev(this, other);
 
     /// <summary>
     ///     Computes the Manhattan distance (a.k.a. Taxicab distance) between this and an <paramref name="other" /> vector. No
     ///     diagonal moves.
     /// </summary>
-    public int DistanceManhattan(Vec2D other) => Math.Abs(other.X - X) + Math.Abs(other.Y - Y);
+    public int DistanceManhattan(Vec2D other) => DistanceManhattan(this, other);
 
     /// <summary>Returns the Euclidean distance squared between two specified points.</summary>
-    public int DistanceSquared(Vec2D other) => (other.X - X) * (other.X - X) + (other.Y - Y) * (other.Y - Y);
+    public int DistanceSquared(Vec2D other) => DistanceSquared(this, other);
 
     /// <summary>Returns the dot product of two vectors.</summary>
     public int Dot(Vec2D other) => Dot(this, other);
@@ -209,6 +209,21 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
 
     /// <summary>Returns the determinant of two vectors. Essentially the 2D Cross Product.</summary>
     public static int Determinant(Vec2D a, Vec2D b) => a.X * b.Y - a.Y * b.X;
+
+    /// <summary>Computes the Euclidean distance between two points.</summary>
+    public static double DistanceEuclidean(Vec2D a, Vec2D b) => Math.Sqrt(DistanceSquared(a, b));
+
+    /// <summary>
+    ///     Computes the Chebyshev distance, also known as chessboard distance - the amount of moves a king would take to
+    ///     get from a to b.
+    /// </summary>
+    public static int DistanceChebyshev(Vec2D a, Vec2D b) => Math.Max(Math.Abs(b.X - a.X), Math.Abs(b.Y - a.Y));
+
+    /// <summary>Computes the Manhattan distance (a.k.a. Taxicab distance) between two points. No diagonal moves.</summary>
+    public static int DistanceManhattan(Vec2D a, Vec2D b) => Math.Abs(b.X - a.X) + Math.Abs(b.Y - a.Y);
+
+    /// <summary>Returns the Euclidean distance squared between two points.</summary>
+    public static int DistanceSquared(Vec2D a, Vec2D b) => (b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y);
 
     /// <summary>Returns the dot product of two vectors.</summary>
     public static int Dot(Vec2D a, Vec2D b) => a.X * b.X + a.Y * b.Y;
@@ -396,7 +411,9 @@ public readonly record struct Vec2D(int X, int Y) : ISpanParsable<Vec2D>, ISpanF
 
     #region Parsing
 
-    public static Vec2D Parse(string s, IFormatProvider? provider = null) => Parse(s, NumberStyles.Integer, provider);
+    public static Vec2D Parse(string s) => Parse(s, null);
+
+    public static Vec2D Parse(string s, IFormatProvider? provider) => Parse(s, NumberStyles.Integer, provider);
 
     public static Vec2D Parse(string s, NumberStyles style, IFormatProvider? provider = null) =>
         string.IsNullOrEmpty(s) ? throw new ArgumentNullException(s) : Parse(s.AsSpan(), style, provider);

@@ -66,7 +66,7 @@ public static class SolutionTests
                 solver.ApplyTestValues(); // overwrites fields and properties with [TestValue] value
                 yield return new TestCaseData(solver, aoCTestCase)
                     .SetCategory($"Y{year}")
-                    .SetName($"Y{year}.D{day:D2}{(i > 1 ? $".{i}" : string.Empty)}");
+                    .SetName($"Y{year}.D{day:D2}{(i > 1 ? $".{i:D2}" : string.Empty)}");
                 i++;
             }
         }
