@@ -10,6 +10,10 @@ public static partial class Utils
 {
     private const double Epsilon = 1e-15;
 
+    /// <summary>Cleans up any floating-point error when near a whole number.</summary>
+    public static bool Approximately(this double value, double target, double epsilon = Epsilon) =>
+        Math.Abs(value - target) < epsilon;
+
     ///<summary>Binomial coefficient. a.k.a. "n choose k". ex. "7 choose 2" = 7 * (7 - 1) / 2 = 21.</summary>
     public static int BinomialChoose(this int n, int k)
     {
@@ -159,16 +163,9 @@ public static partial class Utils
     public static T Product<T>(this IEnumerable<T> source) where T : INumber<T> =>
         source.Aggregate(T.MultiplicativeIdentity, (current, value) => current * value);
 
-    /// <summary>Cleans up any floating-point error when near a whole number.</summary>
-    public static double RemoveError(this double value, double epsilon = Epsilon)
-    {
-        var rounded = Math.Round(value);
-        return Math.Abs(value - rounded) < epsilon ? rounded : value;
-    }
-
     /// <summary>
     ///     Generic solver for a set of linear equations. Expects an NxN matrix of coefficient and N-length array of
-    ///     constants where N is the number of unknown variables that it will solve for. 
+    ///     constants where N is the number of unknown variables that it will solve for.
     /// </summary>
     /// <param name="coefficients">Multidimensional array of coefficients; the multipliers of the unknown variables</param>
     /// <param name="constants">The known values unassociated with any variable on the right-hand side of the equation</param>

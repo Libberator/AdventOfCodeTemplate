@@ -3,10 +3,7 @@ using AoC.Utilities.Extensions;
 
 namespace AoC.Utilities.Geometry;
 
-/// <summary>
-///     A simple readonly quaternion value type used for transforming <see cref="Vec2D" /> and <see cref="Vec3D" />
-///     instances.
-/// </summary>
+/// <summary>A simple readonly quaternion value type used for rotating vectors.</summary>
 /// <param name="W">The scalar part</param>
 /// <param name="X">The <b>i</b> component of the vector part</param>
 /// <param name="Y">The <b>j</b> component of the vector part</param>
@@ -59,8 +56,10 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
         _ => throw new ArgumentOutOfRangeException(nameof(axis), axis, $"Invalid axis [{axis}]")
     };
 
+    /// <inheritdoc cref="FromAxisAngle(AoC.Utilities.Geometry.Axis,int)" />
     public static Quaternion FromAxisAngle(Vec3D axis, int angleDeg) => FromAxisAngle(axis.X, axis.Y, axis.Z, angleDeg);
 
+    /// <inheritdoc cref="FromAxisAngle(AoC.Utilities.Geometry.Axis,int)" />
     public static Quaternion FromAxisAngle(Vec3DLong axis, int angleDeg) =>
         FromAxisAngle(axis.X, axis.Y, axis.Z, angleDeg);
 
@@ -96,26 +95,19 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
     /// <returns>A normalized quaternion</returns>
     public Quaternion Normalize()
     {
-        var norm = Math.Sqrt(X * X + Y * Y + Z * Z).RemoveError();
-        if (norm == 0) return new Quaternion(W < 0 ? -1 : 1, 0, 0, 0);
-        var w = Math.Clamp(W, -1, 1).RemoveError();
+        var w = Math.Clamp(W, -1, 1);
+        var norm = Math.Sqrt(X * X + Y * Y + Z * Z);
+        if (norm.Approximately(0)) return new Quaternion(W < 0 ? -1 : 1, 0, 0, 0);
         var scaleFactor = Math.Sqrt(1 - w * w) / norm;
-        return new Quaternion(w,
-            (X * scaleFactor).RemoveError(),
-            (Y * scaleFactor).RemoveError(),
-            (Z * scaleFactor).RemoveError());
+        return new Quaternion(w, X * scaleFactor, Y * scaleFactor, Z * scaleFactor);
     }
 
-    /// <summary>
-    ///     Converts a rotation to angle-axis representation (angles in degrees).
-    /// </summary>
+    /// <summary>Converts a rotation to angle-axis representation (angles in degrees).</summary>
     public void ToAngleAxis(out double angle, out double x, out double y, out double z)
     {
         angle = 2 * Math.Acos(W) * Angle.Rad2Deg;
-        var norm = Math.Sqrt(X * X + Y * Y + Z * Z).RemoveError();
-        x = norm == 0 ? 0 : X / norm;
-        y = norm == 0 ? 0 : Y / norm;
-        z = norm == 0 ? 0 : Z / norm;
+        var norm = Math.Sqrt(X * X + Y * Y + Z * Z);
+        (x, y, z) = norm.Approximately(0) ? (0, 0, 0) : (X / norm, Y / norm, Z / norm);
     }
 
     public static Quaternion operator *(Quaternion a, Quaternion b) => new(
@@ -149,5 +141,5 @@ public readonly record struct Quaternion(double W, double X, double Y, double Z)
         return new Vec3DLong((long)Math.Round(result.X), (long)Math.Round(result.Y), (long)Math.Round(result.Z));
     }
 
-    public override string ToString() => $"{W:g2} + <{X:g2}i,{Y:g2}j,{Z:g2}k>";
+    public override string ToString() => $"{W:0.##} + <{X:0.##}i,{Y:0.##}j,{Z:0.##}k>";
 }
